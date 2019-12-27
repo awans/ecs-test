@@ -707,184 +707,6 @@
                   }
                 }
               },
-              "DB": {
-                "id": "DB",
-                "path": "ecs-stack/prod/DB",
-                "children": {
-                  "SubnetGroup": {
-                    "id": "SubnetGroup",
-                    "path": "ecs-stack/prod/DB/SubnetGroup",
-                    "attributes": {
-                      "aws:cdk:cloudformation:type": "AWS::RDS::DBSubnetGroup",
-                      "aws:cdk:cloudformation:props": {
-                        "dbSubnetGroupDescription": "Subnet group for DB database",
-                        "subnetIds": [
-                          {
-                            "Ref": "prodVPCPrivateSubnet1Subnet6794AAA7"
-                          },
-                          {
-                            "Ref": "prodVPCPrivateSubnet2Subnet04B92CA7"
-                          }
-                        ]
-                      }
-                    }
-                  },
-                  "SecurityGroup": {
-                    "id": "SecurityGroup",
-                    "path": "ecs-stack/prod/DB/SecurityGroup",
-                    "children": {
-                      "Resource": {
-                        "id": "Resource",
-                        "path": "ecs-stack/prod/DB/SecurityGroup/Resource",
-                        "attributes": {
-                          "aws:cdk:cloudformation:type": "AWS::EC2::SecurityGroup",
-                          "aws:cdk:cloudformation:props": {
-                            "groupDescription": "Security group for DB database",
-                            "securityGroupEgress": [
-                              {
-                                "cidrIp": "0.0.0.0/0",
-                                "description": "Allow all outbound traffic by default",
-                                "ipProtocol": "-1"
-                              }
-                            ],
-                            "vpcId": {
-                              "Ref": "prodVPC05D050A5"
-                            }
-                          }
-                        }
-                      },
-                      "from ecsstackprodFargateServiceSecurityGroup3F6B27D3:{IndirectPort}": {
-                        "id": "from ecsstackprodFargateServiceSecurityGroup3F6B27D3:{IndirectPort}",
-                        "path": "ecs-stack/prod/DB/SecurityGroup/from ecsstackprodFargateServiceSecurityGroup3F6B27D3:{IndirectPort}",
-                        "attributes": {
-                          "aws:cdk:cloudformation:type": "AWS::EC2::SecurityGroupIngress",
-                          "aws:cdk:cloudformation:props": {
-                            "ipProtocol": "tcp",
-                            "description": "from ecsstackprodFargateServiceSecurityGroup3F6B27D3:{IndirectPort}",
-                            "fromPort": {
-                              "Fn::GetAtt": [
-                                "prodDB19DA47CF",
-                                "Endpoint.Port"
-                              ]
-                            },
-                            "groupId": {
-                              "Fn::GetAtt": [
-                                "prodDBSecurityGroup27027367",
-                                "GroupId"
-                              ]
-                            },
-                            "sourceSecurityGroupId": {
-                              "Fn::GetAtt": [
-                                "prodFargateServiceSecurityGroup5FF63DF0",
-                                "GroupId"
-                              ]
-                            },
-                            "toPort": {
-                              "Fn::GetAtt": [
-                                "prodDB19DA47CF",
-                                "Endpoint.Port"
-                              ]
-                            }
-                          }
-                        }
-                      }
-                    }
-                  },
-                  "Secret": {
-                    "id": "Secret",
-                    "path": "ecs-stack/prod/DB/Secret",
-                    "children": {
-                      "Resource": {
-                        "id": "Resource",
-                        "path": "ecs-stack/prod/DB/Secret/Resource",
-                        "attributes": {
-                          "aws:cdk:cloudformation:type": "AWS::SecretsManager::Secret",
-                          "aws:cdk:cloudformation:props": {
-                            "generateSecretString": {
-                              "passwordLength": 30,
-                              "secretStringTemplate": "{\"username\":\"postgres\"}",
-                              "generateStringKey": "password",
-                              "excludeCharacters": "\"@/\\"
-                            }
-                          }
-                        }
-                      },
-                      "AttachedSecret": {
-                        "id": "AttachedSecret",
-                        "path": "ecs-stack/prod/DB/Secret/AttachedSecret",
-                        "children": {
-                          "Resource": {
-                            "id": "Resource",
-                            "path": "ecs-stack/prod/DB/Secret/AttachedSecret/Resource",
-                            "attributes": {
-                              "aws:cdk:cloudformation:type": "AWS::SecretsManager::SecretTargetAttachment",
-                              "aws:cdk:cloudformation:props": {
-                                "secretId": {
-                                  "Ref": "prodDBSecretB63E7E14"
-                                },
-                                "targetId": {
-                                  "Ref": "prodDB19DA47CF"
-                                },
-                                "targetType": "AWS::RDS::DBInstance"
-                              }
-                            }
-                          }
-                        }
-                      }
-                    }
-                  },
-                  "Resource": {
-                    "id": "Resource",
-                    "path": "ecs-stack/prod/DB/Resource",
-                    "attributes": {
-                      "aws:cdk:cloudformation:type": "AWS::RDS::DBInstance",
-                      "aws:cdk:cloudformation:props": {
-                        "dbInstanceClass": "db.t2.small",
-                        "allocatedStorage": "100",
-                        "copyTagsToSnapshot": true,
-                        "dbSubnetGroupName": {
-                          "Ref": "prodDBSubnetGroup125E8662"
-                        },
-                        "deletionProtection": true,
-                        "engine": "postgres",
-                        "masterUsername": {
-                          "Fn::Join": [
-                            "",
-                            [
-                              "{{resolve:secretsmanager:",
-                              {
-                                "Ref": "prodDBSecretB63E7E14"
-                              },
-                              ":SecretString:username::}}"
-                            ]
-                          ]
-                        },
-                        "masterUserPassword": {
-                          "Fn::Join": [
-                            "",
-                            [
-                              "{{resolve:secretsmanager:",
-                              {
-                                "Ref": "prodDBSecretB63E7E14"
-                              },
-                              ":SecretString:password::}}"
-                            ]
-                          ]
-                        },
-                        "storageType": "gp2",
-                        "vpcSecurityGroups": [
-                          {
-                            "Fn::GetAtt": [
-                              "prodDBSecurityGroup27027367",
-                              "GroupId"
-                            ]
-                          }
-                        ]
-                      }
-                    }
-                  }
-                }
-              },
               "Cluster": {
                 "id": "Cluster",
                 "path": "ecs-stack/prod/Cluster",
@@ -976,41 +798,11 @@
                                 "value": "prod"
                               },
                               {
-                                "name": "DATABASE_URL",
-                                "value": {
-                                  "Fn::Join": [
-                                    "",
-                                    [
-                                      {
-                                        "Fn::GetAtt": [
-                                          "prodDB19DA47CF",
-                                          "Endpoint.Address"
-                                        ]
-                                      },
-                                      ":",
-                                      {
-                                        "Fn::GetAtt": [
-                                          "prodDB19DA47CF",
-                                          "Endpoint.Port"
-                                        ]
-                                      }
-                                    ]
-                                  ]
-                                }
-                              },
-                              {
                                 "name": "DATABASE_USERNAME",
                                 "value": "postgres"
                               }
                             ],
-                            "secrets": [
-                              {
-                                "name": "DATABASE_PASSWORD",
-                                "valueFrom": {
-                                  "Ref": "prodDBSecretAttachedSecret5F9B37C3"
-                                }
-                              }
-                            ]
+                            "secrets": []
                           }
                         ],
                         "cpu": "256",
@@ -1117,13 +909,6 @@
                                           "prodTaskDefWebLogGroup785DE79F",
                                           "Arn"
                                         ]
-                                      }
-                                    },
-                                    {
-                                      "Action": "secretsmanager:GetSecretValue",
-                                      "Effect": "Allow",
-                                      "Resource": {
-                                        "Ref": "prodDBSecretAttachedSecret5F9B37C3"
                                       }
                                     }
                                   ],
@@ -1260,915 +1045,134 @@
               }
             }
           },
-          "staging": {
-            "id": "staging",
-            "path": "ecs-stack/staging",
+          "build": {
+            "id": "build",
+            "path": "ecs-stack/build",
             "children": {
-              "VPC": {
-                "id": "VPC",
-                "path": "ecs-stack/staging/VPC",
+              "Build": {
+                "id": "Build",
+                "path": "ecs-stack/build/Build",
                 "children": {
-                  "Resource": {
-                    "id": "Resource",
-                    "path": "ecs-stack/staging/VPC/Resource",
-                    "attributes": {
-                      "aws:cdk:cloudformation:type": "AWS::EC2::VPC",
-                      "aws:cdk:cloudformation:props": {
-                        "cidrBlock": "10.0.0.0/21",
-                        "enableDnsHostnames": true,
-                        "enableDnsSupport": true,
-                        "instanceTenancy": "default",
-                        "tags": [
-                          {
-                            "key": "Name",
-                            "value": "ecs-stack/staging/VPC"
-                          }
-                        ]
-                      }
-                    }
-                  },
-                  "PublicSubnet1": {
-                    "id": "PublicSubnet1",
-                    "path": "ecs-stack/staging/VPC/PublicSubnet1",
-                    "children": {
-                      "Subnet": {
-                        "id": "Subnet",
-                        "path": "ecs-stack/staging/VPC/PublicSubnet1/Subnet",
-                        "attributes": {
-                          "aws:cdk:cloudformation:type": "AWS::EC2::Subnet",
-                          "aws:cdk:cloudformation:props": {
-                            "cidrBlock": "10.0.0.0/23",
-                            "vpcId": {
-                              "Ref": "stagingVPCDF88DF06"
-                            },
-                            "availabilityZone": {
-                              "Fn::Select": [
-                                0,
-                                {
-                                  "Fn::GetAZs": ""
-                                }
-                              ]
-                            },
-                            "mapPublicIpOnLaunch": true,
-                            "tags": [
-                              {
-                                "key": "Name",
-                                "value": "ecs-stack/staging/VPC/PublicSubnet1"
-                              },
-                              {
-                                "key": "aws-cdk:subnet-name",
-                                "value": "Public"
-                              },
-                              {
-                                "key": "aws-cdk:subnet-type",
-                                "value": "Public"
-                              }
-                            ]
-                          }
-                        }
-                      },
-                      "Acl": {
-                        "id": "Acl",
-                        "path": "ecs-stack/staging/VPC/PublicSubnet1/Acl"
-                      },
-                      "RouteTable": {
-                        "id": "RouteTable",
-                        "path": "ecs-stack/staging/VPC/PublicSubnet1/RouteTable",
-                        "attributes": {
-                          "aws:cdk:cloudformation:type": "AWS::EC2::RouteTable",
-                          "aws:cdk:cloudformation:props": {
-                            "vpcId": {
-                              "Ref": "stagingVPCDF88DF06"
-                            },
-                            "tags": [
-                              {
-                                "key": "Name",
-                                "value": "ecs-stack/staging/VPC/PublicSubnet1"
-                              }
-                            ]
-                          }
-                        }
-                      },
-                      "RouteTableAssociation": {
-                        "id": "RouteTableAssociation",
-                        "path": "ecs-stack/staging/VPC/PublicSubnet1/RouteTableAssociation",
-                        "attributes": {
-                          "aws:cdk:cloudformation:type": "AWS::EC2::SubnetRouteTableAssociation",
-                          "aws:cdk:cloudformation:props": {
-                            "routeTableId": {
-                              "Ref": "stagingVPCPublicSubnet1RouteTableB733F0B7"
-                            },
-                            "subnetId": {
-                              "Ref": "stagingVPCPublicSubnet1SubnetF096E9E2"
-                            }
-                          }
-                        }
-                      },
-                      "DefaultRoute": {
-                        "id": "DefaultRoute",
-                        "path": "ecs-stack/staging/VPC/PublicSubnet1/DefaultRoute",
-                        "attributes": {
-                          "aws:cdk:cloudformation:type": "AWS::EC2::Route",
-                          "aws:cdk:cloudformation:props": {
-                            "routeTableId": {
-                              "Ref": "stagingVPCPublicSubnet1RouteTableB733F0B7"
-                            },
-                            "destinationCidrBlock": "0.0.0.0/0",
-                            "gatewayId": {
-                              "Ref": "stagingVPCIGW75476555"
-                            }
-                          }
-                        }
-                      },
-                      "EIP": {
-                        "id": "EIP",
-                        "path": "ecs-stack/staging/VPC/PublicSubnet1/EIP",
-                        "attributes": {
-                          "aws:cdk:cloudformation:type": "AWS::EC2::EIP",
-                          "aws:cdk:cloudformation:props": {
-                            "domain": "vpc",
-                            "tags": [
-                              {
-                                "key": "Name",
-                                "value": "ecs-stack/staging/VPC/PublicSubnet1"
-                              }
-                            ]
-                          }
-                        }
-                      },
-                      "NATGateway": {
-                        "id": "NATGateway",
-                        "path": "ecs-stack/staging/VPC/PublicSubnet1/NATGateway",
-                        "attributes": {
-                          "aws:cdk:cloudformation:type": "AWS::EC2::NatGateway",
-                          "aws:cdk:cloudformation:props": {
-                            "allocationId": {
-                              "Fn::GetAtt": [
-                                "stagingVPCPublicSubnet1EIP7C5AD693",
-                                "AllocationId"
-                              ]
-                            },
-                            "subnetId": {
-                              "Ref": "stagingVPCPublicSubnet1SubnetF096E9E2"
-                            },
-                            "tags": [
-                              {
-                                "key": "Name",
-                                "value": "ecs-stack/staging/VPC/PublicSubnet1"
-                              }
-                            ]
-                          }
-                        }
-                      }
-                    }
-                  },
-                  "PublicSubnet2": {
-                    "id": "PublicSubnet2",
-                    "path": "ecs-stack/staging/VPC/PublicSubnet2",
-                    "children": {
-                      "Subnet": {
-                        "id": "Subnet",
-                        "path": "ecs-stack/staging/VPC/PublicSubnet2/Subnet",
-                        "attributes": {
-                          "aws:cdk:cloudformation:type": "AWS::EC2::Subnet",
-                          "aws:cdk:cloudformation:props": {
-                            "cidrBlock": "10.0.2.0/23",
-                            "vpcId": {
-                              "Ref": "stagingVPCDF88DF06"
-                            },
-                            "availabilityZone": {
-                              "Fn::Select": [
-                                1,
-                                {
-                                  "Fn::GetAZs": ""
-                                }
-                              ]
-                            },
-                            "mapPublicIpOnLaunch": true,
-                            "tags": [
-                              {
-                                "key": "Name",
-                                "value": "ecs-stack/staging/VPC/PublicSubnet2"
-                              },
-                              {
-                                "key": "aws-cdk:subnet-name",
-                                "value": "Public"
-                              },
-                              {
-                                "key": "aws-cdk:subnet-type",
-                                "value": "Public"
-                              }
-                            ]
-                          }
-                        }
-                      },
-                      "Acl": {
-                        "id": "Acl",
-                        "path": "ecs-stack/staging/VPC/PublicSubnet2/Acl"
-                      },
-                      "RouteTable": {
-                        "id": "RouteTable",
-                        "path": "ecs-stack/staging/VPC/PublicSubnet2/RouteTable",
-                        "attributes": {
-                          "aws:cdk:cloudformation:type": "AWS::EC2::RouteTable",
-                          "aws:cdk:cloudformation:props": {
-                            "vpcId": {
-                              "Ref": "stagingVPCDF88DF06"
-                            },
-                            "tags": [
-                              {
-                                "key": "Name",
-                                "value": "ecs-stack/staging/VPC/PublicSubnet2"
-                              }
-                            ]
-                          }
-                        }
-                      },
-                      "RouteTableAssociation": {
-                        "id": "RouteTableAssociation",
-                        "path": "ecs-stack/staging/VPC/PublicSubnet2/RouteTableAssociation",
-                        "attributes": {
-                          "aws:cdk:cloudformation:type": "AWS::EC2::SubnetRouteTableAssociation",
-                          "aws:cdk:cloudformation:props": {
-                            "routeTableId": {
-                              "Ref": "stagingVPCPublicSubnet2RouteTableB2CBC89F"
-                            },
-                            "subnetId": {
-                              "Ref": "stagingVPCPublicSubnet2Subnet2271A13F"
-                            }
-                          }
-                        }
-                      },
-                      "DefaultRoute": {
-                        "id": "DefaultRoute",
-                        "path": "ecs-stack/staging/VPC/PublicSubnet2/DefaultRoute",
-                        "attributes": {
-                          "aws:cdk:cloudformation:type": "AWS::EC2::Route",
-                          "aws:cdk:cloudformation:props": {
-                            "routeTableId": {
-                              "Ref": "stagingVPCPublicSubnet2RouteTableB2CBC89F"
-                            },
-                            "destinationCidrBlock": "0.0.0.0/0",
-                            "gatewayId": {
-                              "Ref": "stagingVPCIGW75476555"
-                            }
-                          }
-                        }
-                      },
-                      "EIP": {
-                        "id": "EIP",
-                        "path": "ecs-stack/staging/VPC/PublicSubnet2/EIP",
-                        "attributes": {
-                          "aws:cdk:cloudformation:type": "AWS::EC2::EIP",
-                          "aws:cdk:cloudformation:props": {
-                            "domain": "vpc",
-                            "tags": [
-                              {
-                                "key": "Name",
-                                "value": "ecs-stack/staging/VPC/PublicSubnet2"
-                              }
-                            ]
-                          }
-                        }
-                      },
-                      "NATGateway": {
-                        "id": "NATGateway",
-                        "path": "ecs-stack/staging/VPC/PublicSubnet2/NATGateway",
-                        "attributes": {
-                          "aws:cdk:cloudformation:type": "AWS::EC2::NatGateway",
-                          "aws:cdk:cloudformation:props": {
-                            "allocationId": {
-                              "Fn::GetAtt": [
-                                "stagingVPCPublicSubnet2EIP4DD6B429",
-                                "AllocationId"
-                              ]
-                            },
-                            "subnetId": {
-                              "Ref": "stagingVPCPublicSubnet2Subnet2271A13F"
-                            },
-                            "tags": [
-                              {
-                                "key": "Name",
-                                "value": "ecs-stack/staging/VPC/PublicSubnet2"
-                              }
-                            ]
-                          }
-                        }
-                      }
-                    }
-                  },
-                  "PrivateSubnet1": {
-                    "id": "PrivateSubnet1",
-                    "path": "ecs-stack/staging/VPC/PrivateSubnet1",
-                    "children": {
-                      "Subnet": {
-                        "id": "Subnet",
-                        "path": "ecs-stack/staging/VPC/PrivateSubnet1/Subnet",
-                        "attributes": {
-                          "aws:cdk:cloudformation:type": "AWS::EC2::Subnet",
-                          "aws:cdk:cloudformation:props": {
-                            "cidrBlock": "10.0.4.0/23",
-                            "vpcId": {
-                              "Ref": "stagingVPCDF88DF06"
-                            },
-                            "availabilityZone": {
-                              "Fn::Select": [
-                                0,
-                                {
-                                  "Fn::GetAZs": ""
-                                }
-                              ]
-                            },
-                            "mapPublicIpOnLaunch": false,
-                            "tags": [
-                              {
-                                "key": "Name",
-                                "value": "ecs-stack/staging/VPC/PrivateSubnet1"
-                              },
-                              {
-                                "key": "aws-cdk:subnet-name",
-                                "value": "Private"
-                              },
-                              {
-                                "key": "aws-cdk:subnet-type",
-                                "value": "Private"
-                              }
-                            ]
-                          }
-                        }
-                      },
-                      "Acl": {
-                        "id": "Acl",
-                        "path": "ecs-stack/staging/VPC/PrivateSubnet1/Acl"
-                      },
-                      "RouteTable": {
-                        "id": "RouteTable",
-                        "path": "ecs-stack/staging/VPC/PrivateSubnet1/RouteTable",
-                        "attributes": {
-                          "aws:cdk:cloudformation:type": "AWS::EC2::RouteTable",
-                          "aws:cdk:cloudformation:props": {
-                            "vpcId": {
-                              "Ref": "stagingVPCDF88DF06"
-                            },
-                            "tags": [
-                              {
-                                "key": "Name",
-                                "value": "ecs-stack/staging/VPC/PrivateSubnet1"
-                              }
-                            ]
-                          }
-                        }
-                      },
-                      "RouteTableAssociation": {
-                        "id": "RouteTableAssociation",
-                        "path": "ecs-stack/staging/VPC/PrivateSubnet1/RouteTableAssociation",
-                        "attributes": {
-                          "aws:cdk:cloudformation:type": "AWS::EC2::SubnetRouteTableAssociation",
-                          "aws:cdk:cloudformation:props": {
-                            "routeTableId": {
-                              "Ref": "stagingVPCPrivateSubnet1RouteTableA65B6A8F"
-                            },
-                            "subnetId": {
-                              "Ref": "stagingVPCPrivateSubnet1SubnetA5864E19"
-                            }
-                          }
-                        }
-                      },
-                      "DefaultRoute": {
-                        "id": "DefaultRoute",
-                        "path": "ecs-stack/staging/VPC/PrivateSubnet1/DefaultRoute",
-                        "attributes": {
-                          "aws:cdk:cloudformation:type": "AWS::EC2::Route",
-                          "aws:cdk:cloudformation:props": {
-                            "routeTableId": {
-                              "Ref": "stagingVPCPrivateSubnet1RouteTableA65B6A8F"
-                            },
-                            "destinationCidrBlock": "0.0.0.0/0",
-                            "natGatewayId": {
-                              "Ref": "stagingVPCPublicSubnet1NATGateway36438E83"
-                            }
-                          }
-                        }
-                      }
-                    }
-                  },
-                  "PrivateSubnet2": {
-                    "id": "PrivateSubnet2",
-                    "path": "ecs-stack/staging/VPC/PrivateSubnet2",
-                    "children": {
-                      "Subnet": {
-                        "id": "Subnet",
-                        "path": "ecs-stack/staging/VPC/PrivateSubnet2/Subnet",
-                        "attributes": {
-                          "aws:cdk:cloudformation:type": "AWS::EC2::Subnet",
-                          "aws:cdk:cloudformation:props": {
-                            "cidrBlock": "10.0.6.0/23",
-                            "vpcId": {
-                              "Ref": "stagingVPCDF88DF06"
-                            },
-                            "availabilityZone": {
-                              "Fn::Select": [
-                                1,
-                                {
-                                  "Fn::GetAZs": ""
-                                }
-                              ]
-                            },
-                            "mapPublicIpOnLaunch": false,
-                            "tags": [
-                              {
-                                "key": "Name",
-                                "value": "ecs-stack/staging/VPC/PrivateSubnet2"
-                              },
-                              {
-                                "key": "aws-cdk:subnet-name",
-                                "value": "Private"
-                              },
-                              {
-                                "key": "aws-cdk:subnet-type",
-                                "value": "Private"
-                              }
-                            ]
-                          }
-                        }
-                      },
-                      "Acl": {
-                        "id": "Acl",
-                        "path": "ecs-stack/staging/VPC/PrivateSubnet2/Acl"
-                      },
-                      "RouteTable": {
-                        "id": "RouteTable",
-                        "path": "ecs-stack/staging/VPC/PrivateSubnet2/RouteTable",
-                        "attributes": {
-                          "aws:cdk:cloudformation:type": "AWS::EC2::RouteTable",
-                          "aws:cdk:cloudformation:props": {
-                            "vpcId": {
-                              "Ref": "stagingVPCDF88DF06"
-                            },
-                            "tags": [
-                              {
-                                "key": "Name",
-                                "value": "ecs-stack/staging/VPC/PrivateSubnet2"
-                              }
-                            ]
-                          }
-                        }
-                      },
-                      "RouteTableAssociation": {
-                        "id": "RouteTableAssociation",
-                        "path": "ecs-stack/staging/VPC/PrivateSubnet2/RouteTableAssociation",
-                        "attributes": {
-                          "aws:cdk:cloudformation:type": "AWS::EC2::SubnetRouteTableAssociation",
-                          "aws:cdk:cloudformation:props": {
-                            "routeTableId": {
-                              "Ref": "stagingVPCPrivateSubnet2RouteTableEDFA1ED2"
-                            },
-                            "subnetId": {
-                              "Ref": "stagingVPCPrivateSubnet2Subnet3EF81AA2"
-                            }
-                          }
-                        }
-                      },
-                      "DefaultRoute": {
-                        "id": "DefaultRoute",
-                        "path": "ecs-stack/staging/VPC/PrivateSubnet2/DefaultRoute",
-                        "attributes": {
-                          "aws:cdk:cloudformation:type": "AWS::EC2::Route",
-                          "aws:cdk:cloudformation:props": {
-                            "routeTableId": {
-                              "Ref": "stagingVPCPrivateSubnet2RouteTableEDFA1ED2"
-                            },
-                            "destinationCidrBlock": "0.0.0.0/0",
-                            "natGatewayId": {
-                              "Ref": "stagingVPCPublicSubnet2NATGateway8470BC2E"
-                            }
-                          }
-                        }
-                      }
-                    }
-                  },
-                  "IGW": {
-                    "id": "IGW",
-                    "path": "ecs-stack/staging/VPC/IGW",
-                    "attributes": {
-                      "aws:cdk:cloudformation:type": "AWS::EC2::InternetGateway",
-                      "aws:cdk:cloudformation:props": {
-                        "tags": [
-                          {
-                            "key": "Name",
-                            "value": "ecs-stack/staging/VPC"
-                          }
-                        ]
-                      }
-                    }
-                  },
-                  "VPCGW": {
-                    "id": "VPCGW",
-                    "path": "ecs-stack/staging/VPC/VPCGW",
-                    "attributes": {
-                      "aws:cdk:cloudformation:type": "AWS::EC2::VPCGatewayAttachment",
-                      "aws:cdk:cloudformation:props": {
-                        "vpcId": {
-                          "Ref": "stagingVPCDF88DF06"
-                        },
-                        "internetGatewayId": {
-                          "Ref": "stagingVPCIGW75476555"
-                        }
-                      }
-                    }
-                  }
-                }
-              },
-              "ALB": {
-                "id": "ALB",
-                "path": "ecs-stack/staging/ALB",
-                "children": {
-                  "Resource": {
-                    "id": "Resource",
-                    "path": "ecs-stack/staging/ALB/Resource",
-                    "attributes": {
-                      "aws:cdk:cloudformation:type": "AWS::ElasticLoadBalancingV2::LoadBalancer",
-                      "aws:cdk:cloudformation:props": {
-                        "scheme": "internet-facing",
-                        "securityGroups": [
-                          {
-                            "Fn::GetAtt": [
-                              "stagingALBSecurityGroup920BDA99",
-                              "GroupId"
-                            ]
-                          }
-                        ],
-                        "subnets": [
-                          {
-                            "Ref": "stagingVPCPublicSubnet1SubnetF096E9E2"
-                          },
-                          {
-                            "Ref": "stagingVPCPublicSubnet2Subnet2271A13F"
-                          }
-                        ],
-                        "type": "application"
-                      }
-                    }
-                  },
-                  "SecurityGroup": {
-                    "id": "SecurityGroup",
-                    "path": "ecs-stack/staging/ALB/SecurityGroup",
+                  "ArtifactsBucketEncryptionKey": {
+                    "id": "ArtifactsBucketEncryptionKey",
+                    "path": "ecs-stack/build/Build/ArtifactsBucketEncryptionKey",
                     "children": {
                       "Resource": {
                         "id": "Resource",
-                        "path": "ecs-stack/staging/ALB/SecurityGroup/Resource",
+                        "path": "ecs-stack/build/Build/ArtifactsBucketEncryptionKey/Resource",
                         "attributes": {
-                          "aws:cdk:cloudformation:type": "AWS::EC2::SecurityGroup",
+                          "aws:cdk:cloudformation:type": "AWS::KMS::Key",
                           "aws:cdk:cloudformation:props": {
-                            "groupDescription": "Automatically created Security Group for ELB ecsstackstagingALB8C878BB8",
-                            "securityGroupIngress": [
-                              {
-                                "cidrIp": "0.0.0.0/0",
-                                "ipProtocol": "tcp",
-                                "fromPort": 80,
-                                "toPort": 80,
-                                "description": "Allow from anyone on port 80"
-                              },
-                              {
-                                "cidrIp": "0.0.0.0/0",
-                                "ipProtocol": "tcp",
-                                "fromPort": 443,
-                                "toPort": 443,
-                                "description": "Allow from anyone on port 443"
-                              }
-                            ],
-                            "vpcId": {
-                              "Ref": "stagingVPCDF88DF06"
-                            }
-                          }
-                        }
-                      },
-                      "to ecsstackstagingFargateServiceSecurityGroup8A4EBEFA:5000": {
-                        "id": "to ecsstackstagingFargateServiceSecurityGroup8A4EBEFA:5000",
-                        "path": "ecs-stack/staging/ALB/SecurityGroup/to ecsstackstagingFargateServiceSecurityGroup8A4EBEFA:5000",
-                        "attributes": {
-                          "aws:cdk:cloudformation:type": "AWS::EC2::SecurityGroupEgress",
-                          "aws:cdk:cloudformation:props": {
-                            "groupId": {
-                              "Fn::GetAtt": [
-                                "stagingALBSecurityGroup920BDA99",
-                                "GroupId"
-                              ]
-                            },
-                            "ipProtocol": "tcp",
-                            "description": "Load balancer to target",
-                            "destinationSecurityGroupId": {
-                              "Fn::GetAtt": [
-                                "stagingFargateServiceSecurityGroupE0F79EF2",
-                                "GroupId"
-                              ]
-                            },
-                            "fromPort": 5000,
-                            "toPort": 5000
-                          }
-                        }
-                      }
-                    }
-                  },
-                  "HTTPListener": {
-                    "id": "HTTPListener",
-                    "path": "ecs-stack/staging/ALB/HTTPListener",
-                    "children": {
-                      "Resource": {
-                        "id": "Resource",
-                        "path": "ecs-stack/staging/ALB/HTTPListener/Resource",
-                        "attributes": {
-                          "aws:cdk:cloudformation:type": "AWS::ElasticLoadBalancingV2::Listener",
-                          "aws:cdk:cloudformation:props": {
-                            "defaultActions": [
-                              {
-                                "redirectConfig": {
-                                  "protocol": "HTTPS",
-                                  "statusCode": "HTTP_301"
-                                },
-                                "type": "redirect"
-                              }
-                            ],
-                            "loadBalancerArn": {
-                              "Ref": "stagingALB210AED05"
-                            },
-                            "port": 80,
-                            "protocol": "HTTP"
-                          }
-                        }
-                      }
-                    }
-                  },
-                  "HTTPSListener": {
-                    "id": "HTTPSListener",
-                    "path": "ecs-stack/staging/ALB/HTTPSListener",
-                    "children": {
-                      "Resource": {
-                        "id": "Resource",
-                        "path": "ecs-stack/staging/ALB/HTTPSListener/Resource",
-                        "attributes": {
-                          "aws:cdk:cloudformation:type": "AWS::ElasticLoadBalancingV2::Listener",
-                          "aws:cdk:cloudformation:props": {
-                            "defaultActions": [
-                              {
-                                "targetGroupArn": {
-                                  "Ref": "stagingALBHTTPSListenerFargateServiceTargetGroupF5B8FB86"
-                                },
-                                "type": "forward"
-                              }
-                            ],
-                            "loadBalancerArn": {
-                              "Ref": "stagingALB210AED05"
-                            },
-                            "port": 443,
-                            "protocol": "HTTPS",
-                            "certificates": [
-                              {
-                                "certificateArn": "arn:aws:acm:us-west-1:312093006778:certificate/e00b73a0-f919-4ea0-a2d8-81f985331665"
-                              }
-                            ]
-                          }
-                        }
-                      },
-                      "FargateServiceTargetGroup": {
-                        "id": "FargateServiceTargetGroup",
-                        "path": "ecs-stack/staging/ALB/HTTPSListener/FargateServiceTargetGroup",
-                        "children": {
-                          "Resource": {
-                            "id": "Resource",
-                            "path": "ecs-stack/staging/ALB/HTTPSListener/FargateServiceTargetGroup/Resource",
-                            "attributes": {
-                              "aws:cdk:cloudformation:type": "AWS::ElasticLoadBalancingV2::TargetGroup",
-                              "aws:cdk:cloudformation:props": {
-                                "port": 5000,
-                                "protocol": "HTTP",
-                                "targetType": "ip",
-                                "vpcId": {
-                                  "Ref": "stagingVPCDF88DF06"
-                                }
-                              }
-                            }
-                          }
-                        }
-                      }
-                    }
-                  }
-                }
-              },
-              "DB": {
-                "id": "DB",
-                "path": "ecs-stack/staging/DB",
-                "children": {
-                  "SubnetGroup": {
-                    "id": "SubnetGroup",
-                    "path": "ecs-stack/staging/DB/SubnetGroup",
-                    "attributes": {
-                      "aws:cdk:cloudformation:type": "AWS::RDS::DBSubnetGroup",
-                      "aws:cdk:cloudformation:props": {
-                        "dbSubnetGroupDescription": "Subnet group for DB database",
-                        "subnetIds": [
-                          {
-                            "Ref": "stagingVPCPrivateSubnet1SubnetA5864E19"
-                          },
-                          {
-                            "Ref": "stagingVPCPrivateSubnet2Subnet3EF81AA2"
-                          }
-                        ]
-                      }
-                    }
-                  },
-                  "SecurityGroup": {
-                    "id": "SecurityGroup",
-                    "path": "ecs-stack/staging/DB/SecurityGroup",
-                    "children": {
-                      "Resource": {
-                        "id": "Resource",
-                        "path": "ecs-stack/staging/DB/SecurityGroup/Resource",
-                        "attributes": {
-                          "aws:cdk:cloudformation:type": "AWS::EC2::SecurityGroup",
-                          "aws:cdk:cloudformation:props": {
-                            "groupDescription": "Security group for DB database",
-                            "securityGroupEgress": [
-                              {
-                                "cidrIp": "0.0.0.0/0",
-                                "description": "Allow all outbound traffic by default",
-                                "ipProtocol": "-1"
-                              }
-                            ],
-                            "vpcId": {
-                              "Ref": "stagingVPCDF88DF06"
-                            }
-                          }
-                        }
-                      },
-                      "from ecsstackstagingFargateServiceSecurityGroup8A4EBEFA:{IndirectPort}": {
-                        "id": "from ecsstackstagingFargateServiceSecurityGroup8A4EBEFA:{IndirectPort}",
-                        "path": "ecs-stack/staging/DB/SecurityGroup/from ecsstackstagingFargateServiceSecurityGroup8A4EBEFA:{IndirectPort}",
-                        "attributes": {
-                          "aws:cdk:cloudformation:type": "AWS::EC2::SecurityGroupIngress",
-                          "aws:cdk:cloudformation:props": {
-                            "ipProtocol": "tcp",
-                            "description": "from ecsstackstagingFargateServiceSecurityGroup8A4EBEFA:{IndirectPort}",
-                            "fromPort": {
-                              "Fn::GetAtt": [
-                                "stagingDBF99FC939",
-                                "Endpoint.Port"
-                              ]
-                            },
-                            "groupId": {
-                              "Fn::GetAtt": [
-                                "stagingDBSecurityGroupEB1F3248",
-                                "GroupId"
-                              ]
-                            },
-                            "sourceSecurityGroupId": {
-                              "Fn::GetAtt": [
-                                "stagingFargateServiceSecurityGroupE0F79EF2",
-                                "GroupId"
-                              ]
-                            },
-                            "toPort": {
-                              "Fn::GetAtt": [
-                                "stagingDBF99FC939",
-                                "Endpoint.Port"
-                              ]
-                            }
-                          }
-                        }
-                      }
-                    }
-                  },
-                  "Secret": {
-                    "id": "Secret",
-                    "path": "ecs-stack/staging/DB/Secret",
-                    "children": {
-                      "Resource": {
-                        "id": "Resource",
-                        "path": "ecs-stack/staging/DB/Secret/Resource",
-                        "attributes": {
-                          "aws:cdk:cloudformation:type": "AWS::SecretsManager::Secret",
-                          "aws:cdk:cloudformation:props": {
-                            "generateSecretString": {
-                              "passwordLength": 30,
-                              "secretStringTemplate": "{\"username\":\"postgres\"}",
-                              "generateStringKey": "password",
-                              "excludeCharacters": "\"@/\\"
-                            }
-                          }
-                        }
-                      },
-                      "AttachedSecret": {
-                        "id": "AttachedSecret",
-                        "path": "ecs-stack/staging/DB/Secret/AttachedSecret",
-                        "children": {
-                          "Resource": {
-                            "id": "Resource",
-                            "path": "ecs-stack/staging/DB/Secret/AttachedSecret/Resource",
-                            "attributes": {
-                              "aws:cdk:cloudformation:type": "AWS::SecretsManager::SecretTargetAttachment",
-                              "aws:cdk:cloudformation:props": {
-                                "secretId": {
-                                  "Ref": "stagingDBSecretF8227C4F"
-                                },
-                                "targetId": {
-                                  "Ref": "stagingDBF99FC939"
-                                },
-                                "targetType": "AWS::RDS::DBInstance"
-                              }
-                            }
-                          }
-                        }
-                      }
-                    }
-                  },
-                  "Resource": {
-                    "id": "Resource",
-                    "path": "ecs-stack/staging/DB/Resource",
-                    "attributes": {
-                      "aws:cdk:cloudformation:type": "AWS::RDS::DBInstance",
-                      "aws:cdk:cloudformation:props": {
-                        "dbInstanceClass": "db.t2.small",
-                        "allocatedStorage": "100",
-                        "copyTagsToSnapshot": true,
-                        "dbSubnetGroupName": {
-                          "Ref": "stagingDBSubnetGroup126B98C2"
-                        },
-                        "deletionProtection": true,
-                        "engine": "postgres",
-                        "masterUsername": {
-                          "Fn::Join": [
-                            "",
-                            [
-                              "{{resolve:secretsmanager:",
-                              {
-                                "Ref": "stagingDBSecretF8227C4F"
-                              },
-                              ":SecretString:username::}}"
-                            ]
-                          ]
-                        },
-                        "masterUserPassword": {
-                          "Fn::Join": [
-                            "",
-                            [
-                              "{{resolve:secretsmanager:",
-                              {
-                                "Ref": "stagingDBSecretF8227C4F"
-                              },
-                              ":SecretString:password::}}"
-                            ]
-                          ]
-                        },
-                        "storageType": "gp2",
-                        "vpcSecurityGroups": [
-                          {
-                            "Fn::GetAtt": [
-                              "stagingDBSecurityGroupEB1F3248",
-                              "GroupId"
-                            ]
-                          }
-                        ]
-                      }
-                    }
-                  }
-                }
-              },
-              "Cluster": {
-                "id": "Cluster",
-                "path": "ecs-stack/staging/Cluster",
-                "children": {
-                  "Resource": {
-                    "id": "Resource",
-                    "path": "ecs-stack/staging/Cluster/Resource",
-                    "attributes": {
-                      "aws:cdk:cloudformation:type": "AWS::ECS::Cluster",
-                      "aws:cdk:cloudformation:props": {}
-                    }
-                  }
-                }
-              },
-              "TaskDef": {
-                "id": "TaskDef",
-                "path": "ecs-stack/staging/TaskDef",
-                "children": {
-                  "TaskRole": {
-                    "id": "TaskRole",
-                    "path": "ecs-stack/staging/TaskDef/TaskRole",
-                    "children": {
-                      "Resource": {
-                        "id": "Resource",
-                        "path": "ecs-stack/staging/TaskDef/TaskRole/Resource",
-                        "attributes": {
-                          "aws:cdk:cloudformation:type": "AWS::IAM::Role",
-                          "aws:cdk:cloudformation:props": {
-                            "assumeRolePolicyDocument": {
+                            "keyPolicy": {
                               "Statement": [
                                 {
-                                  "Action": "sts:AssumeRole",
+                                  "Action": [
+                                    "kms:Create*",
+                                    "kms:Describe*",
+                                    "kms:Enable*",
+                                    "kms:List*",
+                                    "kms:Put*",
+                                    "kms:Update*",
+                                    "kms:Revoke*",
+                                    "kms:Disable*",
+                                    "kms:Get*",
+                                    "kms:Delete*",
+                                    "kms:ScheduleKeyDeletion",
+                                    "kms:CancelKeyDeletion",
+                                    "kms:GenerateDataKey"
+                                  ],
                                   "Effect": "Allow",
                                   "Principal": {
-                                    "Service": "ecs-tasks.amazonaws.com"
-                                  }
+                                    "AWS": {
+                                      "Fn::Join": [
+                                        "",
+                                        [
+                                          "arn:",
+                                          {
+                                            "Ref": "AWS::Partition"
+                                          },
+                                          ":iam::",
+                                          {
+                                            "Ref": "AWS::AccountId"
+                                          },
+                                          ":root"
+                                        ]
+                                      ]
+                                    }
+                                  },
+                                  "Resource": "*"
+                                },
+                                {
+                                  "Action": [
+                                    "kms:Decrypt",
+                                    "kms:DescribeKey",
+                                    "kms:Encrypt",
+                                    "kms:ReEncrypt*",
+                                    "kms:GenerateDataKey*"
+                                  ],
+                                  "Effect": "Allow",
+                                  "Principal": {
+                                    "AWS": {
+                                      "Fn::GetAtt": [
+                                        "buildBuildRoleFD82DEDD",
+                                        "Arn"
+                                      ]
+                                    }
+                                  },
+                                  "Resource": "*"
+                                },
+                                {
+                                  "Action": [
+                                    "kms:Decrypt",
+                                    "kms:DescribeKey",
+                                    "kms:Encrypt",
+                                    "kms:ReEncrypt*",
+                                    "kms:GenerateDataKey*"
+                                  ],
+                                  "Effect": "Allow",
+                                  "Principal": {
+                                    "AWS": {
+                                      "Fn::GetAtt": [
+                                        "buildBuildProjectRoleB1EDAC3C",
+                                        "Arn"
+                                      ]
+                                    }
+                                  },
+                                  "Resource": "*"
+                                },
+                                {
+                                  "Action": [
+                                    "kms:Decrypt",
+                                    "kms:Encrypt",
+                                    "kms:ReEncrypt*",
+                                    "kms:GenerateDataKey*"
+                                  ],
+                                  "Effect": "Allow",
+                                  "Principal": {
+                                    "AWS": {
+                                      "Fn::GetAtt": [
+                                        "buildBuildProjectRoleB1EDAC3C",
+                                        "Arn"
+                                      ]
+                                    }
+                                  },
+                                  "Resource": "*"
+                                },
+                                {
+                                  "Action": [
+                                    "kms:Decrypt",
+                                    "kms:DescribeKey"
+                                  ],
+                                  "Effect": "Allow",
+                                  "Principal": {
+                                    "AWS": {
+                                      "Fn::GetAtt": [
+                                        "buildBuildDeployDeployActionCodePipelineActionRole5B52B660",
+                                        "Arn"
+                                      ]
+                                    }
+                                  },
+                                  "Resource": "*"
                                 }
                               ],
                               "Version": "2012-10-17"
@@ -2178,138 +1182,69 @@
                       }
                     }
                   },
-                  "Resource": {
-                    "id": "Resource",
-                    "path": "ecs-stack/staging/TaskDef/Resource",
-                    "attributes": {
-                      "aws:cdk:cloudformation:type": "AWS::ECS::TaskDefinition",
-                      "aws:cdk:cloudformation:props": {
-                        "containerDefinitions": [
-                          {
-                            "essential": true,
-                            "image": {
-                              "Fn::Join": [
-                                "",
-                                [
-                                  "312093006778.dkr.ecr.us-west-1.",
-                                  {
-                                    "Ref": "AWS::URLSuffix"
-                                  },
-                                  "/ecs-experiment:latest"
-                                ]
+                  "ArtifactsBucket": {
+                    "id": "ArtifactsBucket",
+                    "path": "ecs-stack/build/Build/ArtifactsBucket",
+                    "children": {
+                      "Resource": {
+                        "id": "Resource",
+                        "path": "ecs-stack/build/Build/ArtifactsBucket/Resource",
+                        "attributes": {
+                          "aws:cdk:cloudformation:type": "AWS::S3::Bucket",
+                          "aws:cdk:cloudformation:props": {
+                            "bucketEncryption": {
+                              "serverSideEncryptionConfiguration": [
+                                {
+                                  "serverSideEncryptionByDefault": {
+                                    "sseAlgorithm": "aws:kms",
+                                    "kmsMasterKeyId": {
+                                      "Fn::GetAtt": [
+                                        "buildBuildArtifactsBucketEncryptionKey763B75A5",
+                                        "Arn"
+                                      ]
+                                    }
+                                  }
+                                }
                               ]
-                            },
-                            "name": "Web",
-                            "portMappings": [
-                              {
-                                "containerPort": 5000,
-                                "protocol": "tcp"
-                              }
-                            ],
-                            "logConfiguration": {
-                              "logDriver": "awslogs",
-                              "options": {
-                                "awslogs-group": {
-                                  "Ref": "stagingTaskDefWebLogGroup197B9372"
-                                },
-                                "awslogs-stream-prefix": "staging-ECSCluster",
-                                "awslogs-region": {
-                                  "Ref": "AWS::Region"
-                                }
-                              }
-                            },
-                            "environment": [
-                              {
-                                "name": "STAGE",
-                                "value": "staging"
-                              },
-                              {
-                                "name": "DATABASE_URL",
-                                "value": {
-                                  "Fn::Join": [
-                                    "",
-                                    [
-                                      {
-                                        "Fn::GetAtt": [
-                                          "stagingDBF99FC939",
-                                          "Endpoint.Address"
-                                        ]
-                                      },
-                                      ":",
-                                      {
-                                        "Fn::GetAtt": [
-                                          "stagingDBF99FC939",
-                                          "Endpoint.Port"
-                                        ]
-                                      }
-                                    ]
-                                  ]
-                                }
-                              },
-                              {
-                                "name": "DATABASE_USERNAME",
-                                "value": "postgres"
-                              }
-                            ],
-                            "secrets": [
-                              {
-                                "name": "DATABASE_PASSWORD",
-                                "valueFrom": {
-                                  "Ref": "stagingDBSecretAttachedSecret80A24E75"
-                                }
-                              }
-                            ]
+                            }
                           }
-                        ],
-                        "cpu": "256",
-                        "executionRoleArn": {
-                          "Fn::GetAtt": [
-                            "stagingTaskDefExecutionRole7F495404",
-                            "Arn"
-                          ]
-                        },
-                        "family": "ecsstackstagingTaskDef0B7D9DFC",
-                        "memory": "512",
-                        "networkMode": "awsvpc",
-                        "requiresCompatibilities": [
-                          "FARGATE"
-                        ],
-                        "taskRoleArn": {
-                          "Fn::GetAtt": [
-                            "stagingTaskDefTaskRole110AF896",
-                            "Arn"
-                          ]
                         }
+                      },
+                      "Notifications": {
+                        "id": "Notifications",
+                        "path": "ecs-stack/build/Build/ArtifactsBucket/Notifications"
                       }
                     }
                   },
-                  "Web": {
-                    "id": "Web",
-                    "path": "ecs-stack/staging/TaskDef/Web",
+                  "ArtifactsBucketEncryptionKeyAlias": {
+                    "id": "ArtifactsBucketEncryptionKeyAlias",
+                    "path": "ecs-stack/build/Build/ArtifactsBucketEncryptionKeyAlias",
                     "children": {
-                      "LogGroup": {
-                        "id": "LogGroup",
-                        "path": "ecs-stack/staging/TaskDef/Web/LogGroup",
-                        "children": {
-                          "Resource": {
-                            "id": "Resource",
-                            "path": "ecs-stack/staging/TaskDef/Web/LogGroup/Resource",
-                            "attributes": {
-                              "aws:cdk:cloudformation:type": "AWS::Logs::LogGroup",
-                              "aws:cdk:cloudformation:props": {}
+                      "Resource": {
+                        "id": "Resource",
+                        "path": "ecs-stack/build/Build/ArtifactsBucketEncryptionKeyAlias/Resource",
+                        "attributes": {
+                          "aws:cdk:cloudformation:type": "AWS::KMS::Alias",
+                          "aws:cdk:cloudformation:props": {
+                            "aliasName": "alias/codepipeline-ecsstackbuildbuildeec01162",
+                            "targetKeyId": {
+                              "Fn::GetAtt": [
+                                "buildBuildArtifactsBucketEncryptionKey763B75A5",
+                                "Arn"
+                              ]
                             }
                           }
                         }
                       }
                     }
                   },
-                  "ExecutionRole": {
-                    "id": "ExecutionRole",
-                    "path": "ecs-stack/staging/TaskDef/ExecutionRole",
+                  "Role": {
+                    "id": "Role",
+                    "path": "ecs-stack/build/Build/Role",
                     "children": {
                       "Resource": {
                         "id": "Resource",
-                        "path": "ecs-stack/staging/TaskDef/ExecutionRole/Resource",
+                        "path": "ecs-stack/build/Build/Role/Resource",
                         "attributes": {
                           "aws:cdk:cloudformation:type": "AWS::IAM::Role",
                           "aws:cdk:cloudformation:props": {
@@ -2319,7 +1254,7 @@
                                   "Action": "sts:AssumeRole",
                                   "Effect": "Allow",
                                   "Principal": {
-                                    "Service": "ecs-tasks.amazonaws.com"
+                                    "Service": "codepipeline.amazonaws.com"
                                   }
                                 }
                               ],
@@ -2330,11 +1265,11 @@
                       },
                       "DefaultPolicy": {
                         "id": "DefaultPolicy",
-                        "path": "ecs-stack/staging/TaskDef/ExecutionRole/DefaultPolicy",
+                        "path": "ecs-stack/build/Build/Role/DefaultPolicy",
                         "children": {
                           "Resource": {
                             "id": "Resource",
-                            "path": "ecs-stack/staging/TaskDef/ExecutionRole/DefaultPolicy/Resource",
+                            "path": "ecs-stack/build/Build/Role/DefaultPolicy/Resource",
                             "attributes": {
                               "aws:cdk:cloudformation:type": "AWS::IAM::Policy",
                               "aws:cdk:cloudformation:props": {
@@ -2342,45 +1277,80 @@
                                   "Statement": [
                                     {
                                       "Action": [
-                                        "ecr:BatchCheckLayerAvailability",
-                                        "ecr:GetDownloadUrlForLayer",
-                                        "ecr:BatchGetImage"
+                                        "s3:GetObject*",
+                                        "s3:GetBucket*",
+                                        "s3:List*",
+                                        "s3:DeleteObject*",
+                                        "s3:PutObject*",
+                                        "s3:Abort*"
                                       ],
                                       "Effect": "Allow",
-                                      "Resource": "arn:aws:ecr:us-west-1:312093006778:repository/ecs-experiment"
-                                    },
-                                    {
-                                      "Action": "ecr:GetAuthorizationToken",
-                                      "Effect": "Allow",
-                                      "Resource": "*"
+                                      "Resource": [
+                                        {
+                                          "Fn::GetAtt": [
+                                            "buildBuildArtifactsBucketC48D24F0",
+                                            "Arn"
+                                          ]
+                                        },
+                                        {
+                                          "Fn::Join": [
+                                            "",
+                                            [
+                                              {
+                                                "Fn::GetAtt": [
+                                                  "buildBuildArtifactsBucketC48D24F0",
+                                                  "Arn"
+                                                ]
+                                              },
+                                              "/*"
+                                            ]
+                                          ]
+                                        }
+                                      ]
                                     },
                                     {
                                       "Action": [
-                                        "logs:CreateLogStream",
-                                        "logs:PutLogEvents"
+                                        "kms:Decrypt",
+                                        "kms:DescribeKey",
+                                        "kms:Encrypt",
+                                        "kms:ReEncrypt*",
+                                        "kms:GenerateDataKey*"
                                       ],
                                       "Effect": "Allow",
                                       "Resource": {
                                         "Fn::GetAtt": [
-                                          "stagingTaskDefWebLogGroup197B9372",
+                                          "buildBuildArtifactsBucketEncryptionKey763B75A5",
                                           "Arn"
                                         ]
                                       }
                                     },
                                     {
-                                      "Action": "secretsmanager:GetSecretValue",
+                                      "Action": "sts:AssumeRole",
                                       "Effect": "Allow",
                                       "Resource": {
-                                        "Ref": "stagingDBSecretAttachedSecret80A24E75"
+                                        "Fn::GetAtt": [
+                                          "buildBuildCodeBuildProjectCodePipelineActionRole4CD8144A",
+                                          "Arn"
+                                        ]
+                                      }
+                                    },
+                                    {
+                                      "Action": "sts:AssumeRole",
+                                      "Effect": "Allow",
+                                      "Resource": {
+                                        "Fn::GetAtt": [
+                                          "buildBuildDeployDeployActionCodePipelineActionRole5B52B660",
+                                          "Arn"
+                                        ]
                                       }
                                     }
                                   ],
                                   "Version": "2012-10-17"
                                 },
-                                "policyName": "stagingTaskDefExecutionRoleDefaultPolicy9C29B924",
+                                "policyName": "buildBuildRoleDefaultPolicyE72CB198",
                                 "roles": [
                                   {
-                                    "Ref": "stagingTaskDefExecutionRole7F495404"
+                                    "Ref": "buildBuildRoleFD82DEDD"
                                   }
                                 ]
                               }
@@ -2389,117 +1359,630 @@
                         }
                       }
                     }
-                  }
-                }
-              },
-              "repo": {
-                "id": "repo",
-                "path": "ecs-stack/staging/repo"
-              },
-              "FargateService": {
-                "id": "FargateService",
-                "path": "ecs-stack/staging/FargateService",
-                "children": {
-                  "Service": {
-                    "id": "Service",
-                    "path": "ecs-stack/staging/FargateService/Service",
+                  },
+                  "Resource": {
+                    "id": "Resource",
+                    "path": "ecs-stack/build/Build/Resource",
                     "attributes": {
-                      "aws:cdk:cloudformation:type": "AWS::ECS::Service",
+                      "aws:cdk:cloudformation:type": "AWS::CodePipeline::Pipeline",
                       "aws:cdk:cloudformation:props": {
-                        "cluster": {
-                          "Ref": "stagingCluster0E743F35"
+                        "roleArn": {
+                          "Fn::GetAtt": [
+                            "buildBuildRoleFD82DEDD",
+                            "Arn"
+                          ]
                         },
-                        "deploymentConfiguration": {
-                          "maximumPercent": 200,
-                          "minimumHealthyPercent": 50
-                        },
-                        "desiredCount": 2,
-                        "enableEcsManagedTags": false,
-                        "healthCheckGracePeriodSeconds": 60,
-                        "launchType": "FARGATE",
-                        "loadBalancers": [
+                        "stages": [
                           {
-                            "targetGroupArn": {
-                              "Ref": "stagingALBHTTPSListenerFargateServiceTargetGroupF5B8FB86"
-                            },
-                            "containerName": "Web",
-                            "containerPort": 5000
-                          }
-                        ],
-                        "networkConfiguration": {
-                          "awsvpcConfiguration": {
-                            "assignPublicIp": "DISABLED",
-                            "subnets": [
+                            "name": "Source",
+                            "actions": [
                               {
-                                "Ref": "stagingVPCPrivateSubnet1SubnetA5864E19"
-                              },
-                              {
-                                "Ref": "stagingVPCPrivateSubnet2Subnet3EF81AA2"
+                                "name": "Source",
+                                "outputArtifacts": [
+                                  {
+                                    "name": "SourceOutput"
+                                  }
+                                ],
+                                "actionTypeId": {
+                                  "category": "Source",
+                                  "version": "1",
+                                  "owner": "ThirdParty",
+                                  "provider": "GitHub"
+                                },
+                                "configuration": {
+                                  "Owner": "awans",
+                                  "Repo": "ecs-test",
+                                  "Branch": "master",
+                                  "OAuthToken": "{{resolve:secretsmanager:/ecs-pipeline/secrets/github/token:SecretString:::}}",
+                                  "PollForSourceChanges": false
+                                },
+                                "runOrder": 1
                               }
-                            ],
-                            "securityGroups": [
+                            ]
+                          },
+                          {
+                            "name": "Build",
+                            "actions": [
                               {
-                                "Fn::GetAtt": [
-                                  "stagingFargateServiceSecurityGroupE0F79EF2",
-                                  "GroupId"
-                                ]
+                                "name": "CodeBuildProject",
+                                "inputArtifacts": [
+                                  {
+                                    "name": "SourceOutput"
+                                  }
+                                ],
+                                "outputArtifacts": [
+                                  {
+                                    "name": "BuildOutput"
+                                  }
+                                ],
+                                "actionTypeId": {
+                                  "category": "Build",
+                                  "version": "1",
+                                  "owner": "AWS",
+                                  "provider": "CodeBuild"
+                                },
+                                "configuration": {
+                                  "ProjectName": {
+                                    "Ref": "buildBuildProject05D6E481"
+                                  }
+                                },
+                                "runOrder": 1,
+                                "roleArn": {
+                                  "Fn::GetAtt": [
+                                    "buildBuildCodeBuildProjectCodePipelineActionRole4CD8144A",
+                                    "Arn"
+                                  ]
+                                }
+                              }
+                            ]
+                          },
+                          {
+                            "name": "Deploy",
+                            "actions": [
+                              {
+                                "name": "DeployAction",
+                                "inputArtifacts": [
+                                  {
+                                    "name": "BuildOutput"
+                                  }
+                                ],
+                                "actionTypeId": {
+                                  "category": "Deploy",
+                                  "version": "1",
+                                  "owner": "AWS",
+                                  "provider": "ECS"
+                                },
+                                "configuration": {
+                                  "ClusterName": {
+                                    "Ref": "prodCluster9288F49D"
+                                  },
+                                  "ServiceName": {
+                                    "Fn::GetAtt": [
+                                      "prodFargateServiceA1C0E60E",
+                                      "Name"
+                                    ]
+                                  }
+                                },
+                                "runOrder": 1,
+                                "roleArn": {
+                                  "Fn::GetAtt": [
+                                    "buildBuildDeployDeployActionCodePipelineActionRole5B52B660",
+                                    "Arn"
+                                  ]
+                                }
                               }
                             ]
                           }
+                        ],
+                        "artifactStore": {
+                          "type": "S3",
+                          "location": {
+                            "Ref": "buildBuildArtifactsBucketC48D24F0"
+                          },
+                          "encryptionKey": {
+                            "type": "KMS",
+                            "id": {
+                              "Fn::GetAtt": [
+                                "buildBuildArtifactsBucketEncryptionKey763B75A5",
+                                "Arn"
+                              ]
+                            }
+                          }
                         },
-                        "taskDefinition": {
-                          "Ref": "stagingTaskDefA314A7BB"
+                        "name": "ecs-pipeline",
+                        "restartExecutionOnUpdate": true
+                      }
+                    }
+                  },
+                  "Source": {
+                    "id": "Source",
+                    "path": "ecs-stack/build/Build/Source",
+                    "children": {
+                      "Source": {
+                        "id": "Source",
+                        "path": "ecs-stack/build/Build/Source/Source",
+                        "children": {
+                          "WebhookResource": {
+                            "id": "WebhookResource",
+                            "path": "ecs-stack/build/Build/Source/Source/WebhookResource",
+                            "attributes": {
+                              "aws:cdk:cloudformation:type": "AWS::CodePipeline::Webhook",
+                              "aws:cdk:cloudformation:props": {
+                                "authentication": "GITHUB_HMAC",
+                                "authenticationConfiguration": {
+                                  "secretToken": "{{resolve:secretsmanager:/ecs-pipeline/secrets/github/token:SecretString:::}}"
+                                },
+                                "filters": [
+                                  {
+                                    "jsonPath": "$.ref",
+                                    "matchEquals": "refs/heads/{Branch}"
+                                  }
+                                ],
+                                "targetAction": "Source",
+                                "targetPipeline": {
+                                  "Ref": "buildBuild34D1ECBF"
+                                },
+                                "targetPipelineVersion": 1,
+                                "registerWithThirdParty": true
+                              }
+                            }
+                          }
                         }
                       }
                     }
                   },
-                  "SecurityGroup": {
-                    "id": "SecurityGroup",
-                    "path": "ecs-stack/staging/FargateService/SecurityGroup",
+                  "Build": {
+                    "id": "Build",
+                    "path": "ecs-stack/build/Build/Build",
+                    "children": {
+                      "CodeBuildProject": {
+                        "id": "CodeBuildProject",
+                        "path": "ecs-stack/build/Build/Build/CodeBuildProject",
+                        "children": {
+                          "CodePipelineActionRole": {
+                            "id": "CodePipelineActionRole",
+                            "path": "ecs-stack/build/Build/Build/CodeBuildProject/CodePipelineActionRole",
+                            "children": {
+                              "Resource": {
+                                "id": "Resource",
+                                "path": "ecs-stack/build/Build/Build/CodeBuildProject/CodePipelineActionRole/Resource",
+                                "attributes": {
+                                  "aws:cdk:cloudformation:type": "AWS::IAM::Role",
+                                  "aws:cdk:cloudformation:props": {
+                                    "assumeRolePolicyDocument": {
+                                      "Statement": [
+                                        {
+                                          "Action": "sts:AssumeRole",
+                                          "Effect": "Allow",
+                                          "Principal": {
+                                            "AWS": {
+                                              "Fn::Join": [
+                                                "",
+                                                [
+                                                  "arn:",
+                                                  {
+                                                    "Ref": "AWS::Partition"
+                                                  },
+                                                  ":iam::",
+                                                  {
+                                                    "Ref": "AWS::AccountId"
+                                                  },
+                                                  ":root"
+                                                ]
+                                              ]
+                                            }
+                                          }
+                                        }
+                                      ],
+                                      "Version": "2012-10-17"
+                                    }
+                                  }
+                                }
+                              },
+                              "DefaultPolicy": {
+                                "id": "DefaultPolicy",
+                                "path": "ecs-stack/build/Build/Build/CodeBuildProject/CodePipelineActionRole/DefaultPolicy",
+                                "children": {
+                                  "Resource": {
+                                    "id": "Resource",
+                                    "path": "ecs-stack/build/Build/Build/CodeBuildProject/CodePipelineActionRole/DefaultPolicy/Resource",
+                                    "attributes": {
+                                      "aws:cdk:cloudformation:type": "AWS::IAM::Policy",
+                                      "aws:cdk:cloudformation:props": {
+                                        "policyDocument": {
+                                          "Statement": [
+                                            {
+                                              "Action": [
+                                                "codebuild:BatchGetBuilds",
+                                                "codebuild:StartBuild",
+                                                "codebuild:StopBuild"
+                                              ],
+                                              "Effect": "Allow",
+                                              "Resource": {
+                                                "Fn::GetAtt": [
+                                                  "buildBuildProject05D6E481",
+                                                  "Arn"
+                                                ]
+                                              }
+                                            }
+                                          ],
+                                          "Version": "2012-10-17"
+                                        },
+                                        "policyName": "buildBuildCodeBuildProjectCodePipelineActionRoleDefaultPolicyE2EA5394",
+                                        "roles": [
+                                          {
+                                            "Ref": "buildBuildCodeBuildProjectCodePipelineActionRole4CD8144A"
+                                          }
+                                        ]
+                                      }
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "Deploy": {
+                    "id": "Deploy",
+                    "path": "ecs-stack/build/Build/Deploy",
+                    "children": {
+                      "DeployAction": {
+                        "id": "DeployAction",
+                        "path": "ecs-stack/build/Build/Deploy/DeployAction",
+                        "children": {
+                          "CodePipelineActionRole": {
+                            "id": "CodePipelineActionRole",
+                            "path": "ecs-stack/build/Build/Deploy/DeployAction/CodePipelineActionRole",
+                            "children": {
+                              "Resource": {
+                                "id": "Resource",
+                                "path": "ecs-stack/build/Build/Deploy/DeployAction/CodePipelineActionRole/Resource",
+                                "attributes": {
+                                  "aws:cdk:cloudformation:type": "AWS::IAM::Role",
+                                  "aws:cdk:cloudformation:props": {
+                                    "assumeRolePolicyDocument": {
+                                      "Statement": [
+                                        {
+                                          "Action": "sts:AssumeRole",
+                                          "Effect": "Allow",
+                                          "Principal": {
+                                            "AWS": {
+                                              "Fn::Join": [
+                                                "",
+                                                [
+                                                  "arn:",
+                                                  {
+                                                    "Ref": "AWS::Partition"
+                                                  },
+                                                  ":iam::",
+                                                  {
+                                                    "Ref": "AWS::AccountId"
+                                                  },
+                                                  ":root"
+                                                ]
+                                              ]
+                                            }
+                                          }
+                                        }
+                                      ],
+                                      "Version": "2012-10-17"
+                                    }
+                                  }
+                                }
+                              },
+                              "DefaultPolicy": {
+                                "id": "DefaultPolicy",
+                                "path": "ecs-stack/build/Build/Deploy/DeployAction/CodePipelineActionRole/DefaultPolicy",
+                                "children": {
+                                  "Resource": {
+                                    "id": "Resource",
+                                    "path": "ecs-stack/build/Build/Deploy/DeployAction/CodePipelineActionRole/DefaultPolicy/Resource",
+                                    "attributes": {
+                                      "aws:cdk:cloudformation:type": "AWS::IAM::Policy",
+                                      "aws:cdk:cloudformation:props": {
+                                        "policyDocument": {
+                                          "Statement": [
+                                            {
+                                              "Action": [
+                                                "ecs:DescribeServices",
+                                                "ecs:DescribeTaskDefinition",
+                                                "ecs:DescribeTasks",
+                                                "ecs:ListTasks",
+                                                "ecs:RegisterTaskDefinition",
+                                                "ecs:UpdateService"
+                                              ],
+                                              "Effect": "Allow",
+                                              "Resource": "*"
+                                            },
+                                            {
+                                              "Action": "iam:PassRole",
+                                              "Condition": {
+                                                "StringEqualsIfExists": {
+                                                  "iam:PassedToService": [
+                                                    "ec2.amazonaws.com",
+                                                    "ecs-tasks.amazonaws.com"
+                                                  ]
+                                                }
+                                              },
+                                              "Effect": "Allow",
+                                              "Resource": "*"
+                                            },
+                                            {
+                                              "Action": [
+                                                "s3:GetObject*",
+                                                "s3:GetBucket*",
+                                                "s3:List*"
+                                              ],
+                                              "Effect": "Allow",
+                                              "Resource": [
+                                                {
+                                                  "Fn::GetAtt": [
+                                                    "buildBuildArtifactsBucketC48D24F0",
+                                                    "Arn"
+                                                  ]
+                                                },
+                                                {
+                                                  "Fn::Join": [
+                                                    "",
+                                                    [
+                                                      {
+                                                        "Fn::GetAtt": [
+                                                          "buildBuildArtifactsBucketC48D24F0",
+                                                          "Arn"
+                                                        ]
+                                                      },
+                                                      "/*"
+                                                    ]
+                                                  ]
+                                                }
+                                              ]
+                                            },
+                                            {
+                                              "Action": [
+                                                "kms:Decrypt",
+                                                "kms:DescribeKey"
+                                              ],
+                                              "Effect": "Allow",
+                                              "Resource": {
+                                                "Fn::GetAtt": [
+                                                  "buildBuildArtifactsBucketEncryptionKey763B75A5",
+                                                  "Arn"
+                                                ]
+                                              }
+                                            }
+                                          ],
+                                          "Version": "2012-10-17"
+                                        },
+                                        "policyName": "buildBuildDeployDeployActionCodePipelineActionRoleDefaultPolicy6B0199A5",
+                                        "roles": [
+                                          {
+                                            "Ref": "buildBuildDeployDeployActionCodePipelineActionRole5B52B660"
+                                          }
+                                        ]
+                                      }
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              "BuildProject": {
+                "id": "BuildProject",
+                "path": "ecs-stack/build/BuildProject",
+                "children": {
+                  "Role": {
+                    "id": "Role",
+                    "path": "ecs-stack/build/BuildProject/Role",
                     "children": {
                       "Resource": {
                         "id": "Resource",
-                        "path": "ecs-stack/staging/FargateService/SecurityGroup/Resource",
+                        "path": "ecs-stack/build/BuildProject/Role/Resource",
                         "attributes": {
-                          "aws:cdk:cloudformation:type": "AWS::EC2::SecurityGroup",
+                          "aws:cdk:cloudformation:type": "AWS::IAM::Role",
                           "aws:cdk:cloudformation:props": {
-                            "groupDescription": "ecs-stack/staging/FargateService/SecurityGroup",
-                            "securityGroupEgress": [
-                              {
-                                "cidrIp": "0.0.0.0/0",
-                                "description": "Allow all outbound traffic by default",
-                                "ipProtocol": "-1"
-                              }
-                            ],
-                            "vpcId": {
-                              "Ref": "stagingVPCDF88DF06"
+                            "assumeRolePolicyDocument": {
+                              "Statement": [
+                                {
+                                  "Action": "sts:AssumeRole",
+                                  "Effect": "Allow",
+                                  "Principal": {
+                                    "Service": "codebuild.amazonaws.com"
+                                  }
+                                }
+                              ],
+                              "Version": "2012-10-17"
                             }
                           }
                         }
                       },
-                      "from ecsstackstagingALBSecurityGroup30C4035D:5000": {
-                        "id": "from ecsstackstagingALBSecurityGroup30C4035D:5000",
-                        "path": "ecs-stack/staging/FargateService/SecurityGroup/from ecsstackstagingALBSecurityGroup30C4035D:5000",
-                        "attributes": {
-                          "aws:cdk:cloudformation:type": "AWS::EC2::SecurityGroupIngress",
-                          "aws:cdk:cloudformation:props": {
-                            "ipProtocol": "tcp",
-                            "description": "Load balancer to target",
-                            "fromPort": 5000,
-                            "groupId": {
-                              "Fn::GetAtt": [
-                                "stagingFargateServiceSecurityGroupE0F79EF2",
-                                "GroupId"
-                              ]
-                            },
-                            "sourceSecurityGroupId": {
-                              "Fn::GetAtt": [
-                                "stagingALBSecurityGroup920BDA99",
-                                "GroupId"
-                              ]
-                            },
-                            "toPort": 5000
+                      "DefaultPolicy": {
+                        "id": "DefaultPolicy",
+                        "path": "ecs-stack/build/BuildProject/Role/DefaultPolicy",
+                        "children": {
+                          "Resource": {
+                            "id": "Resource",
+                            "path": "ecs-stack/build/BuildProject/Role/DefaultPolicy/Resource",
+                            "attributes": {
+                              "aws:cdk:cloudformation:type": "AWS::IAM::Policy",
+                              "aws:cdk:cloudformation:props": {
+                                "policyDocument": {
+                                  "Statement": [
+                                    {
+                                      "Action": [
+                                        "logs:CreateLogGroup",
+                                        "logs:CreateLogStream",
+                                        "logs:PutLogEvents"
+                                      ],
+                                      "Effect": "Allow",
+                                      "Resource": [
+                                        {
+                                          "Fn::Join": [
+                                            "",
+                                            [
+                                              "arn:",
+                                              {
+                                                "Ref": "AWS::Partition"
+                                              },
+                                              ":logs:",
+                                              {
+                                                "Ref": "AWS::Region"
+                                              },
+                                              ":",
+                                              {
+                                                "Ref": "AWS::AccountId"
+                                              },
+                                              ":log-group:/aws/codebuild/",
+                                              {
+                                                "Ref": "buildBuildProject05D6E481"
+                                              }
+                                            ]
+                                          ]
+                                        },
+                                        {
+                                          "Fn::Join": [
+                                            "",
+                                            [
+                                              "arn:",
+                                              {
+                                                "Ref": "AWS::Partition"
+                                              },
+                                              ":logs:",
+                                              {
+                                                "Ref": "AWS::Region"
+                                              },
+                                              ":",
+                                              {
+                                                "Ref": "AWS::AccountId"
+                                              },
+                                              ":log-group:/aws/codebuild/",
+                                              {
+                                                "Ref": "buildBuildProject05D6E481"
+                                              },
+                                              ":*"
+                                            ]
+                                          ]
+                                        }
+                                      ]
+                                    },
+                                    {
+                                      "Action": [
+                                        "s3:GetObject*",
+                                        "s3:GetBucket*",
+                                        "s3:List*",
+                                        "s3:DeleteObject*",
+                                        "s3:PutObject*",
+                                        "s3:Abort*"
+                                      ],
+                                      "Effect": "Allow",
+                                      "Resource": [
+                                        {
+                                          "Fn::GetAtt": [
+                                            "buildBuildArtifactsBucketC48D24F0",
+                                            "Arn"
+                                          ]
+                                        },
+                                        {
+                                          "Fn::Join": [
+                                            "",
+                                            [
+                                              {
+                                                "Fn::GetAtt": [
+                                                  "buildBuildArtifactsBucketC48D24F0",
+                                                  "Arn"
+                                                ]
+                                              },
+                                              "/*"
+                                            ]
+                                          ]
+                                        }
+                                      ]
+                                    },
+                                    {
+                                      "Action": [
+                                        "kms:Decrypt",
+                                        "kms:DescribeKey",
+                                        "kms:Encrypt",
+                                        "kms:ReEncrypt*",
+                                        "kms:GenerateDataKey*"
+                                      ],
+                                      "Effect": "Allow",
+                                      "Resource": {
+                                        "Fn::GetAtt": [
+                                          "buildBuildArtifactsBucketEncryptionKey763B75A5",
+                                          "Arn"
+                                        ]
+                                      }
+                                    },
+                                    {
+                                      "Action": [
+                                        "kms:Decrypt",
+                                        "kms:Encrypt",
+                                        "kms:ReEncrypt*",
+                                        "kms:GenerateDataKey*"
+                                      ],
+                                      "Effect": "Allow",
+                                      "Resource": {
+                                        "Fn::GetAtt": [
+                                          "buildBuildArtifactsBucketEncryptionKey763B75A5",
+                                          "Arn"
+                                        ]
+                                      }
+                                    }
+                                  ],
+                                  "Version": "2012-10-17"
+                                },
+                                "policyName": "buildBuildProjectRoleDefaultPolicy5FB40503",
+                                "roles": [
+                                  {
+                                    "Ref": "buildBuildProjectRoleB1EDAC3C"
+                                  }
+                                ]
+                              }
+                            }
                           }
+                        }
+                      }
+                    }
+                  },
+                  "Resource": {
+                    "id": "Resource",
+                    "path": "ecs-stack/build/BuildProject/Resource",
+                    "attributes": {
+                      "aws:cdk:cloudformation:type": "AWS::CodeBuild::Project",
+                      "aws:cdk:cloudformation:props": {
+                        "artifacts": {
+                          "type": "CODEPIPELINE"
+                        },
+                        "environment": {
+                          "type": "LINUX_CONTAINER",
+                          "image": "aws/codebuild/docker:18.09.0",
+                          "privilegedMode": true,
+                          "computeType": "BUILD_GENERAL1_SMALL"
+                        },
+                        "serviceRole": {
+                          "Fn::GetAtt": [
+                            "buildBuildProjectRoleB1EDAC3C",
+                            "Arn"
+                          ]
+                        },
+                        "source": {
+                          "type": "CODEPIPELINE",
+                          "buildSpec": "buildspec.yml"
+                        },
+                        "encryptionKey": {
+                          "Fn::GetAtt": [
+                            "buildBuildArtifactsBucketEncryptionKey763B75A5",
+                            "Arn"
+                          ]
                         }
                       }
                     }
@@ -2507,10 +1990,6 @@
                 }
               }
             }
-          },
-          "build": {
-            "id": "build",
-            "path": "ecs-stack/build"
           }
         }
       }
