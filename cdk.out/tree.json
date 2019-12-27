@@ -1393,7 +1393,7 @@
                                   "Owner": "awans",
                                   "Repo": "ecs-test",
                                   "Branch": "master",
-                                  "OAuthToken": "{{resolve:secretsmanager:/ecs-pipeline/secrets/github/token:SecretString:::}}",
+                                  "OAuthToken": "{{resolve:secretsmanager:/ecs-pipeline/secrets/github/token:SecretString:github-token::}}",
                                   "PollForSourceChanges": false
                                 },
                                 "runOrder": 1
@@ -1510,7 +1510,7 @@
                               "aws:cdk:cloudformation:props": {
                                 "authentication": "GITHUB_HMAC",
                                 "authenticationConfiguration": {
-                                  "secretToken": "{{resolve:secretsmanager:/ecs-pipeline/secrets/github/token:SecretString:::}}"
+                                  "secretToken": "{{resolve:secretsmanager:/ecs-pipeline/secrets/github/token:SecretString:github-token::}}"
                                 },
                                 "filters": [
                                   {
@@ -1800,7 +1800,21 @@
                                 }
                               ],
                               "Version": "2012-10-17"
-                            }
+                            },
+                            "managedPolicyArns": [
+                              {
+                                "Fn::Join": [
+                                  "",
+                                  [
+                                    "arn:",
+                                    {
+                                      "Ref": "AWS::Partition"
+                                    },
+                                    ":iam::aws:policy/AmazonEC2ContainerRegistryFullAccess"
+                                  ]
+                                ]
+                              }
+                            ]
                           }
                         }
                       },

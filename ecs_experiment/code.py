@@ -1,6 +1,7 @@
 from aws_cdk import aws_codebuild as codebuild
 from aws_cdk import aws_codepipeline as codepipeline
 from aws_cdk import aws_codepipeline_actions as actions
+from aws_cdk import aws_iam as iam
 from aws_cdk import core
 
 GITHUB_USER = "awans"
@@ -25,7 +26,7 @@ class CodeService(core.Construct):
         build_output = codepipeline.Artifact("BuildOutput")
 
 
-        token = core.SecretValue.secrets_manager("/ecs-pipeline/secrets/github/token")
+        token = core.SecretValue.secrets_manager("/ecs-pipeline/secrets/github/token", json_field="github-token")
         code_pipeline.add_stage(stage_name='Source', actions=[
             actions.GitHubSourceAction(
                 action_name='Source',
@@ -43,6 +44,9 @@ class CodeService(core.Construct):
                 privileged=True
             )
         )
+
+        build_project.role.add_managed_policy(
+            iam.ManagedPolicy.from_aws_managed_policy_name("AmazonEC2ContainerRegistryFullAccess"))
 
         code_pipeline.add_stage(stage_name='Build', actions=[
             actions.CodeBuildAction(

@@ -1166,7 +1166,7 @@
                   "Owner": "awans",
                   "Repo": "ecs-test",
                   "Branch": "master",
-                  "OAuthToken": "{{resolve:secretsmanager:/ecs-pipeline/secrets/github/token:SecretString:::}}",
+                  "OAuthToken": "{{resolve:secretsmanager:/ecs-pipeline/secrets/github/token:SecretString:github-token::}}",
                   "PollForSourceChanges": false
                 },
                 "Name": "Source",
@@ -1285,7 +1285,7 @@
       "Properties": {
         "Authentication": "GITHUB_HMAC",
         "AuthenticationConfiguration": {
-          "SecretToken": "{{resolve:secretsmanager:/ecs-pipeline/secrets/github/token:SecretString:::}}"
+          "SecretToken": "{{resolve:secretsmanager:/ecs-pipeline/secrets/github/token:SecretString:github-token::}}"
         },
         "Filters": [
           {
@@ -1508,7 +1508,21 @@
             }
           ],
           "Version": "2012-10-17"
-        }
+        },
+        "ManagedPolicyArns": [
+          {
+            "Fn::Join": [
+              "",
+              [
+                "arn:",
+                {
+                  "Ref": "AWS::Partition"
+                },
+                ":iam::aws:policy/AmazonEC2ContainerRegistryFullAccess"
+              ]
+            ]
+          }
+        ]
       },
       "Metadata": {
         "aws:cdk:path": "ecs-stack/build/BuildProject/Role/Resource"
