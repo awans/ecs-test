@@ -8,6 +8,6 @@ class EcsStack(core.Stack):
     def __init__(self, scope: core.Construct, id: str, **kwargs) -> None:
         super().__init__(scope, id, **kwargs)
         prod = service.EcsService(self, "prod")
-        staging = service.EcsService(self, "staging")
-        code.CodeService(self, "build", staging, prod)
+        # staging = service.EcsService(self, "staging")
+        code.CodeService(self, "build", None, prod)
 

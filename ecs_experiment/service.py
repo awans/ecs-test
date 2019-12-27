@@ -37,12 +37,12 @@ class EcsService(core.Construct):
             open=True,
             certificate_arns=[CERT_ARN])
 
-        # database
-        db_instance = rds.DatabaseInstance(self, "DB",
-            engine=rds.DatabaseInstanceEngine.POSTGRES,
-            instance_class=ec2.InstanceType.of(ec2.InstanceClass.BURSTABLE2, ec2.InstanceSize.SMALL),
-            master_username="postgres",
-            vpc=vpc)
+#         # database
+#         db_instance = rds.DatabaseInstance(self, "DB",
+#             engine=rds.DatabaseInstanceEngine.POSTGRES,
+#             instance_class=ec2.InstanceType.of(ec2.InstanceClass.BURSTABLE2, ec2.InstanceSize.SMALL),
+#             master_username="postgres",
+#             vpc=vpc)
 
         # fargate cluster
         cluster = ecs.Cluster(self, "Cluster",
@@ -55,11 +55,11 @@ class EcsService(core.Construct):
             image=ecs.ContainerImage.from_ecr_repository(ecr.Repository.from_repository_arn(self, "repo", REPO_ARN), "latest"),
             environment={
                 "STAGE": id,
-                "DATABASE_URL": db_instance.instance_endpoint.socket_address,
+                # "DATABASE_URL": db_instance.instance_endpoint.socket_address,
                 "DATABASE_USERNAME": "postgres",
             },
             secrets={
-                "DATABASE_PASSWORD": ecs.Secret.from_secrets_manager(db_instance.secret),
+                # "DATABASE_PASSWORD": ecs.Secret.from_secrets_manager(db_instance.secret),
             },
             logging=ecs.LogDrivers.aws_logs(stream_prefix=f"{id}-ECSCluster"))
         container.add_port_mappings(ecs.PortMapping(container_port=5000))
@@ -67,8 +67,9 @@ class EcsService(core.Construct):
             cluster=cluster,
             task_definition=task_definition,
             desired_count=2)
+        self.service = fargate_service
 
-        db_instance.connections.allow_default_port_from(fargate_service)
+        # db_instance.connections.allow_default_port_from(fargate_service)
 
         # connect it to the ALB
         p443_listener.add_targets("FargateServiceTarget",
