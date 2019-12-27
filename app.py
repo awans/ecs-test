@@ -2,10 +2,8 @@
 
 from aws_cdk import core
 
-from ecs_experiment.ecs_experiment_stack import EcsExperimentStack
-
+from ecs_experiment.ecs_stack import EcsStack
 
 app = core.App()
-EcsExperimentStack(app, "ecs-experiment")
-
+prod = EcsStack(app, "ecs-stack")
 app.synth()

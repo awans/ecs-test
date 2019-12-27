@@ -1,0 +1,369 @@
+Metadata-Version: 2.1
+Name: aws-cdk.aws-rds
+Version: 1.19.0
+Summary: CDK Constructs for AWS RDS
+Home-page: https://github.com/aws/aws-cdk
+Author: Amazon Web Services
+License: Apache-2.0
+Project-URL: Source, https://github.com/aws/aws-cdk.git
+Platform: UNKNOWN
+Classifier: Intended Audience :: Developers
+Classifier: Operating System :: OS Independent
+Classifier: Programming Language :: JavaScript
+Classifier: Programming Language :: Python :: 3 :: Only
+Classifier: Programming Language :: Python :: 3.6
+Classifier: Programming Language :: Python :: 3.7
+Classifier: Programming Language :: Python :: 3.8
+Classifier: Typing :: Typed
+Classifier: Development Status :: 4 - Beta
+Classifier: License :: OSI Approved
+Requires-Python: >=3.6
+Description-Content-Type: text/markdown
+Requires-Dist: jsii (~=0.20.11)
+Requires-Dist: publication (>=0.0.3)
+Requires-Dist: aws-cdk.aws-cloudwatch (>=1.19.0,~=1.19)
+Requires-Dist: aws-cdk.aws-ec2 (>=1.19.0,~=1.19)
+Requires-Dist: aws-cdk.aws-events (>=1.19.0,~=1.19)
+Requires-Dist: aws-cdk.aws-iam (>=1.19.0,~=1.19)
+Requires-Dist: aws-cdk.aws-kms (>=1.19.0,~=1.19)
+Requires-Dist: aws-cdk.aws-lambda (>=1.19.0,~=1.19)
+Requires-Dist: aws-cdk.aws-logs (>=1.19.0,~=1.19)
+Requires-Dist: aws-cdk.aws-sam (>=1.19.0,~=1.19)
+Requires-Dist: aws-cdk.aws-secretsmanager (>=1.19.0,~=1.19)
+Requires-Dist: aws-cdk.core (>=1.19.0,~=1.19)
+
+## Amazon Relational Database Service Construct Library
+
+<!--BEGIN STABILITY BANNER-->---
+
+
+![Stability: Experimental](https://img.shields.io/badge/stability-Experimental-important.svg?style=for-the-badge)
+
+> **This is a *developer preview* (public beta) module. Releases might lack important features and might have
+> future breaking changes.**
+>
+> This API is still under active development and subject to non-backward
+> compatible changes or removal in any future version. Use of the API is not recommended in production
+> environments. Experimental APIs are not subject to the Semantic Versioning model.
+
+---
+<!--END STABILITY BANNER-->
+
+### Starting a Clustered Database
+
+To set up a clustered database (like Aurora), define a `DatabaseCluster`. You must
+always launch a database in a VPC. Use the `vpcSubnets` attribute to control whether
+your instances will be launched privately or publicly:
+
+```python
+# Example automatically generated. See https://github.com/aws/jsii/issues/826
+cluster = DatabaseCluster(self, "Database",
+    engine=DatabaseClusterEngine.AURORA,
+    master_user={
+        "username": "admin"
+    },
+    instance_props={
+        "instance_type": ec2.InstanceType.of(ec2.InstanceClass.BURSTABLE2, ec2.InstanceSize.SMALL),
+        "vpc_subnets": {
+            "subnet_type": ec2.SubnetType.PUBLIC
+        },
+        "vpc": vpc
+    }
+)
+```
+
+By default, the master password will be generated and stored in AWS Secrets Manager.
+
+Your cluster will be empty by default. To add a default database upon construction, specify the
+`defaultDatabaseName` attribute.
+
+### Starting an Instance Database
+
+To set up a instance database, define a `DatabaseInstance`. You must
+always launch a database in a VPC. Use the `vpcSubnets` attribute to control whether
+your instances will be launched privately or publicly:
+
+```python
+# Example automatically generated. See https://github.com/aws/jsii/issues/826
+instance = DatabaseInstance(stack, "Instance",
+    engine=rds.DatabaseInstanceEngine.ORACLE_SE1,
+    instance_class=ec2.InstanceType.of(ec2.InstanceClass.BURSTABLE2, ec2.InstanceSize.SMALL),
+    master_username="syscdk",
+    vpc=vpc
+)
+```
+
+By default, the master password will be generated and stored in AWS Secrets Manager.
+
+Use `DatabaseInstanceFromSnapshot` and `DatabaseInstanceReadReplica` to create an instance from snapshot or
+a source database respectively:
+
+```python
+# Example automatically generated. See https://github.com/aws/jsii/issues/826
+DatabaseInstanceFromSnapshot(stack, "Instance",
+    snapshot_identifier="my-snapshot",
+    engine=rds.DatabaseInstanceEngine.POSTGRES,
+    instance_class=ec2.InstanceType.of(ec2.InstanceClass.BURSTABLE2, ec2.InstanceSize.LARGE),
+    vpc=vpc
+)
+
+DatabaseInstanceReadReplica(stack, "ReadReplica",
+    source_database_instance=source_instance,
+    engine=rds.DatabaseInstanceEngine.POSTGRES,
+    instance_class=ec2.InstanceType.of(ec2.InstanceClass.BURSTABLE2, ec2.InstanceSize.LARGE),
+    vpc=vpc
+)
+```
+
+Creating a "production" Oracle database instance with option and parameter groups:
+
+```python
+# Example automatically generated. See https://github.com/aws/jsii/issues/826
+# Set open cursors with parameter group
+parameter_group = rds.ParameterGroup(self, "ParameterGroup",
+    family="oracle-se1-11.2",
+    parameters={
+        "open_cursors": "2500"
+    }
+)
+
+option_group = rds.OptionGroup(self, "OptionGroup",
+    engine=rds.DatabaseInstanceEngine.ORACLE_SE1,
+    major_engine_version="11.2",
+    configurations=[OptionConfiguration(
+        name="XMLDB"
+    ), OptionConfiguration(
+        name="OEM",
+        port=1158,
+        vpc=vpc
+    )
+    ]
+)
+
+# Allow connections to OEM
+option_group.option_connections.OEM.connections.allow_default_port_from_any_ipv4()
+
+# Database instance with production values
+instance = rds.DatabaseInstance(self, "Instance",
+    engine=rds.DatabaseInstanceEngine.ORACLE_SE1,
+    license_model=rds.LicenseModel.BRING_YOUR_OWN_LICENSE,
+    instance_class=ec2.InstanceType.of(ec2.InstanceClass.BURSTABLE2, ec2.InstanceSize.MEDIUM),
+    multi_az=True,
+    storage_type=rds.StorageType.IO1,
+    master_username="syscdk",
+    vpc=vpc,
+    database_name="ORCL",
+    storage_encrypted=True,
+    backup_retention=cdk.Duration.days(7),
+    monitoring_interval=cdk.Duration.seconds(60),
+    enable_performance_insights=True,
+    cloudwatch_logs_exports=["trace", "audit", "alert", "listener"
+    ],
+    cloudwatch_logs_retention=logs.RetentionDays.ONE_MONTH,
+    auto_minor_version_upgrade=False,
+    option_group=option_group,
+    parameter_group=parameter_group
+)
+
+# Allow connections on default port from any IPV4
+instance.connections.allow_default_port_from_any_ipv4()
+
+# Rotate the master user password every 30 days
+instance.add_rotation_single_user("Rotation")
+
+# Add alarm for high CPU
+cloudwatch.Alarm(self, "HighCPU",
+    metric=instance.metric_cPUUtilization(),
+    threshold=90,
+    evaluation_periods=1
+)
+
+# Trigger Lambda function on instance availability events
+fn = lambda.Function(self, "Function",
+    code=lambda.Code.from_inline("exports.handler = (event) => console.log(event);"),
+    handler="index.handler",
+    runtime=lambda.Runtime.NODEJS_10_X
+)
+
+availability_rule = instance.on_event("Availability", target=targets.LambdaFunction(fn))
+availability_rule.add_event_pattern(
+    detail={
+        "EventCategories": ["availability"
+        ]
+    }
+)
+```
+
+Add XMLDB and OEM with option group
+
+```python
+# Example automatically generated. See https://github.com/aws/jsii/issues/826
+# Set open cursors with parameter group
+parameter_group = rds.ParameterGroup(self, "ParameterGroup",
+    family="oracle-se1-11.2",
+    parameters={
+        "open_cursors": "2500"
+    }
+)
+
+option_group = rds.OptionGroup(self, "OptionGroup",
+    engine=rds.DatabaseInstanceEngine.ORACLE_SE1,
+    major_engine_version="11.2",
+    configurations=[OptionConfiguration(
+        name="XMLDB"
+    ), OptionConfiguration(
+        name="OEM",
+        port=1158,
+        vpc=vpc
+    )
+    ]
+)
+
+# Allow connections to OEM
+option_group.option_connections.OEM.connections.allow_default_port_from_any_ipv4()
+
+# Database instance with production values
+instance = rds.DatabaseInstance(self, "Instance",
+    engine=rds.DatabaseInstanceEngine.ORACLE_SE1,
+    license_model=rds.LicenseModel.BRING_YOUR_OWN_LICENSE,
+    instance_class=ec2.InstanceType.of(ec2.InstanceClass.BURSTABLE2, ec2.InstanceSize.MEDIUM),
+    multi_az=True,
+    storage_type=rds.StorageType.IO1,
+    master_username="syscdk",
+    vpc=vpc,
+    database_name="ORCL",
+    storage_encrypted=True,
+    backup_retention=cdk.Duration.days(7),
+    monitoring_interval=cdk.Duration.seconds(60),
+    enable_performance_insights=True,
+    cloudwatch_logs_exports=["trace", "audit", "alert", "listener"
+    ],
+    cloudwatch_logs_retention=logs.RetentionDays.ONE_MONTH,
+    auto_minor_version_upgrade=False,
+    option_group=option_group,
+    parameter_group=parameter_group
+)
+
+# Allow connections on default port from any IPV4
+instance.connections.allow_default_port_from_any_ipv4()
+
+# Rotate the master user password every 30 days
+instance.add_rotation_single_user("Rotation")
+
+# Add alarm for high CPU
+cloudwatch.Alarm(self, "HighCPU",
+    metric=instance.metric_cPUUtilization(),
+    threshold=90,
+    evaluation_periods=1
+)
+
+# Trigger Lambda function on instance availability events
+fn = lambda.Function(self, "Function",
+    code=lambda.Code.from_inline("exports.handler = (event) => console.log(event);"),
+    handler="index.handler",
+    runtime=lambda.Runtime.NODEJS_10_X
+)
+
+availability_rule = instance.on_event("Availability", target=targets.LambdaFunction(fn))
+availability_rule.add_event_pattern(
+    detail={
+        "EventCategories": ["availability"
+        ]
+    }
+)
+```
+
+### Instance events
+
+To define Amazon CloudWatch event rules for database instances, use the `onEvent`
+method:
+
+```python
+# Example automatically generated. See https://github.com/aws/jsii/issues/826
+rule = instance.on_event("InstanceEvent", target=targets.LambdaFunction(fn))
+```
+
+### Connecting
+
+To control who can access the cluster or instance, use the `.connections` attribute. RDS databases have
+a default port, so you don't need to specify the port:
+
+```python
+# Example automatically generated. See https://github.com/aws/jsii/issues/826
+cluster.connections.allow_from_any_ipv4("Open to the world")
+```
+
+The endpoints to access your database cluster will be available as the `.clusterEndpoint` and `.readerEndpoint`
+attributes:
+
+```python
+# Example automatically generated. See https://github.com/aws/jsii/issues/826
+write_address = cluster.cluster_endpoint.socket_address
+```
+
+For an instance database:
+
+```python
+# Example automatically generated. See https://github.com/aws/jsii/issues/826
+address = instance.instance_endpoint.socket_address
+```
+
+### Rotating master password
+
+When the master password is generated and stored in AWS Secrets Manager, it can be rotated automatically:
+
+```python
+# Example automatically generated. See https://github.com/aws/jsii/issues/826
+cluster = rds.DatabaseCluster(stack, "Database",
+    engine=rds.DatabaseClusterEngine.AURORA,
+    master_user=Login(
+        username="admin"
+    ),
+    instance_props={
+        "instance_type": ec2.InstanceType.of(ec2.InstanceClass.BURSTABLE2, ec2.InstanceSize.SMALL),
+        "vpc": vpc
+    }
+)
+
+cluster.add_rotation_single_user("Rotation")
+```
+
+Rotation of the master password is also supported for an existing cluster:
+
+```python
+# Example automatically generated. See https://github.com/aws/jsii/issues/826
+SecretRotation(stack, "Rotation",
+    secret=imported_secret,
+    application=SecretRotationApplication.ORACLE_ROTATION_SINGLE_USER,
+    target=imported_cluster, # or importedInstance
+    vpc=imported_vpc
+)
+```
+
+The `importedSecret` must be a JSON string with the following format:
+
+```json
+{
+  "engine": "<required: database engine>",
+  "host": "<required: instance host name>",
+  "username": "<required: username>",
+  "password": "<required: password>",
+  "dbname": "<optional: database name>",
+  "port": "<optional: if not specified, default port will be used>"
+}
+```
+
+### Metrics
+
+Database instances expose metrics (`cloudwatch.Metric`):
+
+```python
+# Example automatically generated. See https://github.com/aws/jsii/issues/826
+# The number of database connections in use (average over 5 minutes)
+db_connections = instance.metric_database_connections()
+
+# The average amount of time taken per disk I/O operation (average over 1 minute)
+read_latency = instance.metric("ReadLatency", statistic="Average", period_sec=60)
+```
+
+

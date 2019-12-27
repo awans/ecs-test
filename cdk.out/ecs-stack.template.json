@@ -1,0 +1,2116 @@
+{
+  "Resources": {
+    "prodVPC05D050A5": {
+      "Type": "AWS::EC2::VPC",
+      "Properties": {
+        "CidrBlock": "10.0.0.0/21",
+        "EnableDnsHostnames": true,
+        "EnableDnsSupport": true,
+        "InstanceTenancy": "default",
+        "Tags": [
+          {
+            "Key": "Name",
+            "Value": "ecs-stack/prod/VPC"
+          }
+        ]
+      },
+      "Metadata": {
+        "aws:cdk:path": "ecs-stack/prod/VPC/Resource"
+      }
+    },
+    "prodVPCPublicSubnet1SubnetBD79F0E4": {
+      "Type": "AWS::EC2::Subnet",
+      "Properties": {
+        "CidrBlock": "10.0.0.0/23",
+        "VpcId": {
+          "Ref": "prodVPC05D050A5"
+        },
+        "AvailabilityZone": {
+          "Fn::Select": [
+            0,
+            {
+              "Fn::GetAZs": ""
+            }
+          ]
+        },
+        "MapPublicIpOnLaunch": true,
+        "Tags": [
+          {
+            "Key": "Name",
+            "Value": "ecs-stack/prod/VPC/PublicSubnet1"
+          },
+          {
+            "Key": "aws-cdk:subnet-name",
+            "Value": "Public"
+          },
+          {
+            "Key": "aws-cdk:subnet-type",
+            "Value": "Public"
+          }
+        ]
+      },
+      "Metadata": {
+        "aws:cdk:path": "ecs-stack/prod/VPC/PublicSubnet1/Subnet"
+      }
+    },
+    "prodVPCPublicSubnet1RouteTable44708A45": {
+      "Type": "AWS::EC2::RouteTable",
+      "Properties": {
+        "VpcId": {
+          "Ref": "prodVPC05D050A5"
+        },
+        "Tags": [
+          {
+            "Key": "Name",
+            "Value": "ecs-stack/prod/VPC/PublicSubnet1"
+          }
+        ]
+      },
+      "Metadata": {
+        "aws:cdk:path": "ecs-stack/prod/VPC/PublicSubnet1/RouteTable"
+      }
+    },
+    "prodVPCPublicSubnet1RouteTableAssociationFFE8BBFF": {
+      "Type": "AWS::EC2::SubnetRouteTableAssociation",
+      "Properties": {
+        "RouteTableId": {
+          "Ref": "prodVPCPublicSubnet1RouteTable44708A45"
+        },
+        "SubnetId": {
+          "Ref": "prodVPCPublicSubnet1SubnetBD79F0E4"
+        }
+      },
+      "Metadata": {
+        "aws:cdk:path": "ecs-stack/prod/VPC/PublicSubnet1/RouteTableAssociation"
+      }
+    },
+    "prodVPCPublicSubnet1DefaultRouteECAAF670": {
+      "Type": "AWS::EC2::Route",
+      "Properties": {
+        "RouteTableId": {
+          "Ref": "prodVPCPublicSubnet1RouteTable44708A45"
+        },
+        "DestinationCidrBlock": "0.0.0.0/0",
+        "GatewayId": {
+          "Ref": "prodVPCIGW0B427BB6"
+        }
+      },
+      "DependsOn": [
+        "prodVPCVPCGWDD93F813"
+      ],
+      "Metadata": {
+        "aws:cdk:path": "ecs-stack/prod/VPC/PublicSubnet1/DefaultRoute"
+      }
+    },
+    "prodVPCPublicSubnet1EIPE7EB2C15": {
+      "Type": "AWS::EC2::EIP",
+      "Properties": {
+        "Domain": "vpc",
+        "Tags": [
+          {
+            "Key": "Name",
+            "Value": "ecs-stack/prod/VPC/PublicSubnet1"
+          }
+        ]
+      },
+      "Metadata": {
+        "aws:cdk:path": "ecs-stack/prod/VPC/PublicSubnet1/EIP"
+      }
+    },
+    "prodVPCPublicSubnet1NATGateway3F669DFC": {
+      "Type": "AWS::EC2::NatGateway",
+      "Properties": {
+        "AllocationId": {
+          "Fn::GetAtt": [
+            "prodVPCPublicSubnet1EIPE7EB2C15",
+            "AllocationId"
+          ]
+        },
+        "SubnetId": {
+          "Ref": "prodVPCPublicSubnet1SubnetBD79F0E4"
+        },
+        "Tags": [
+          {
+            "Key": "Name",
+            "Value": "ecs-stack/prod/VPC/PublicSubnet1"
+          }
+        ]
+      },
+      "Metadata": {
+        "aws:cdk:path": "ecs-stack/prod/VPC/PublicSubnet1/NATGateway"
+      }
+    },
+    "prodVPCPublicSubnet2SubnetBD0F8E17": {
+      "Type": "AWS::EC2::Subnet",
+      "Properties": {
+        "CidrBlock": "10.0.2.0/23",
+        "VpcId": {
+          "Ref": "prodVPC05D050A5"
+        },
+        "AvailabilityZone": {
+          "Fn::Select": [
+            1,
+            {
+              "Fn::GetAZs": ""
+            }
+          ]
+        },
+        "MapPublicIpOnLaunch": true,
+        "Tags": [
+          {
+            "Key": "Name",
+            "Value": "ecs-stack/prod/VPC/PublicSubnet2"
+          },
+          {
+            "Key": "aws-cdk:subnet-name",
+            "Value": "Public"
+          },
+          {
+            "Key": "aws-cdk:subnet-type",
+            "Value": "Public"
+          }
+        ]
+      },
+      "Metadata": {
+        "aws:cdk:path": "ecs-stack/prod/VPC/PublicSubnet2/Subnet"
+      }
+    },
+    "prodVPCPublicSubnet2RouteTableFE407696": {
+      "Type": "AWS::EC2::RouteTable",
+      "Properties": {
+        "VpcId": {
+          "Ref": "prodVPC05D050A5"
+        },
+        "Tags": [
+          {
+            "Key": "Name",
+            "Value": "ecs-stack/prod/VPC/PublicSubnet2"
+          }
+        ]
+      },
+      "Metadata": {
+        "aws:cdk:path": "ecs-stack/prod/VPC/PublicSubnet2/RouteTable"
+      }
+    },
+    "prodVPCPublicSubnet2RouteTableAssociationFC5B8DDF": {
+      "Type": "AWS::EC2::SubnetRouteTableAssociation",
+      "Properties": {
+        "RouteTableId": {
+          "Ref": "prodVPCPublicSubnet2RouteTableFE407696"
+        },
+        "SubnetId": {
+          "Ref": "prodVPCPublicSubnet2SubnetBD0F8E17"
+        }
+      },
+      "Metadata": {
+        "aws:cdk:path": "ecs-stack/prod/VPC/PublicSubnet2/RouteTableAssociation"
+      }
+    },
+    "prodVPCPublicSubnet2DefaultRoute14E755F8": {
+      "Type": "AWS::EC2::Route",
+      "Properties": {
+        "RouteTableId": {
+          "Ref": "prodVPCPublicSubnet2RouteTableFE407696"
+        },
+        "DestinationCidrBlock": "0.0.0.0/0",
+        "GatewayId": {
+          "Ref": "prodVPCIGW0B427BB6"
+        }
+      },
+      "DependsOn": [
+        "prodVPCVPCGWDD93F813"
+      ],
+      "Metadata": {
+        "aws:cdk:path": "ecs-stack/prod/VPC/PublicSubnet2/DefaultRoute"
+      }
+    },
+    "prodVPCPublicSubnet2EIPB7299D42": {
+      "Type": "AWS::EC2::EIP",
+      "Properties": {
+        "Domain": "vpc",
+        "Tags": [
+          {
+            "Key": "Name",
+            "Value": "ecs-stack/prod/VPC/PublicSubnet2"
+          }
+        ]
+      },
+      "Metadata": {
+        "aws:cdk:path": "ecs-stack/prod/VPC/PublicSubnet2/EIP"
+      }
+    },
+    "prodVPCPublicSubnet2NATGatewayF40B99E5": {
+      "Type": "AWS::EC2::NatGateway",
+      "Properties": {
+        "AllocationId": {
+          "Fn::GetAtt": [
+            "prodVPCPublicSubnet2EIPB7299D42",
+            "AllocationId"
+          ]
+        },
+        "SubnetId": {
+          "Ref": "prodVPCPublicSubnet2SubnetBD0F8E17"
+        },
+        "Tags": [
+          {
+            "Key": "Name",
+            "Value": "ecs-stack/prod/VPC/PublicSubnet2"
+          }
+        ]
+      },
+      "Metadata": {
+        "aws:cdk:path": "ecs-stack/prod/VPC/PublicSubnet2/NATGateway"
+      }
+    },
+    "prodVPCPrivateSubnet1Subnet6794AAA7": {
+      "Type": "AWS::EC2::Subnet",
+      "Properties": {
+        "CidrBlock": "10.0.4.0/23",
+        "VpcId": {
+          "Ref": "prodVPC05D050A5"
+        },
+        "AvailabilityZone": {
+          "Fn::Select": [
+            0,
+            {
+              "Fn::GetAZs": ""
+            }
+          ]
+        },
+        "MapPublicIpOnLaunch": false,
+        "Tags": [
+          {
+            "Key": "Name",
+            "Value": "ecs-stack/prod/VPC/PrivateSubnet1"
+          },
+          {
+            "Key": "aws-cdk:subnet-name",
+            "Value": "Private"
+          },
+          {
+            "Key": "aws-cdk:subnet-type",
+            "Value": "Private"
+          }
+        ]
+      },
+      "Metadata": {
+        "aws:cdk:path": "ecs-stack/prod/VPC/PrivateSubnet1/Subnet"
+      }
+    },
+    "prodVPCPrivateSubnet1RouteTableB86A28E0": {
+      "Type": "AWS::EC2::RouteTable",
+      "Properties": {
+        "VpcId": {
+          "Ref": "prodVPC05D050A5"
+        },
+        "Tags": [
+          {
+            "Key": "Name",
+            "Value": "ecs-stack/prod/VPC/PrivateSubnet1"
+          }
+        ]
+      },
+      "Metadata": {
+        "aws:cdk:path": "ecs-stack/prod/VPC/PrivateSubnet1/RouteTable"
+      }
+    },
+    "prodVPCPrivateSubnet1RouteTableAssociation4740BFF4": {
+      "Type": "AWS::EC2::SubnetRouteTableAssociation",
+      "Properties": {
+        "RouteTableId": {
+          "Ref": "prodVPCPrivateSubnet1RouteTableB86A28E0"
+        },
+        "SubnetId": {
+          "Ref": "prodVPCPrivateSubnet1Subnet6794AAA7"
+        }
+      },
+      "Metadata": {
+        "aws:cdk:path": "ecs-stack/prod/VPC/PrivateSubnet1/RouteTableAssociation"
+      }
+    },
+    "prodVPCPrivateSubnet1DefaultRoute32494609": {
+      "Type": "AWS::EC2::Route",
+      "Properties": {
+        "RouteTableId": {
+          "Ref": "prodVPCPrivateSubnet1RouteTableB86A28E0"
+        },
+        "DestinationCidrBlock": "0.0.0.0/0",
+        "NatGatewayId": {
+          "Ref": "prodVPCPublicSubnet1NATGateway3F669DFC"
+        }
+      },
+      "Metadata": {
+        "aws:cdk:path": "ecs-stack/prod/VPC/PrivateSubnet1/DefaultRoute"
+      }
+    },
+    "prodVPCPrivateSubnet2Subnet04B92CA7": {
+      "Type": "AWS::EC2::Subnet",
+      "Properties": {
+        "CidrBlock": "10.0.6.0/23",
+        "VpcId": {
+          "Ref": "prodVPC05D050A5"
+        },
+        "AvailabilityZone": {
+          "Fn::Select": [
+            1,
+            {
+              "Fn::GetAZs": ""
+            }
+          ]
+        },
+        "MapPublicIpOnLaunch": false,
+        "Tags": [
+          {
+            "Key": "Name",
+            "Value": "ecs-stack/prod/VPC/PrivateSubnet2"
+          },
+          {
+            "Key": "aws-cdk:subnet-name",
+            "Value": "Private"
+          },
+          {
+            "Key": "aws-cdk:subnet-type",
+            "Value": "Private"
+          }
+        ]
+      },
+      "Metadata": {
+        "aws:cdk:path": "ecs-stack/prod/VPC/PrivateSubnet2/Subnet"
+      }
+    },
+    "prodVPCPrivateSubnet2RouteTableCDBE868D": {
+      "Type": "AWS::EC2::RouteTable",
+      "Properties": {
+        "VpcId": {
+          "Ref": "prodVPC05D050A5"
+        },
+        "Tags": [
+          {
+            "Key": "Name",
+            "Value": "ecs-stack/prod/VPC/PrivateSubnet2"
+          }
+        ]
+      },
+      "Metadata": {
+        "aws:cdk:path": "ecs-stack/prod/VPC/PrivateSubnet2/RouteTable"
+      }
+    },
+    "prodVPCPrivateSubnet2RouteTableAssociationA818E6F1": {
+      "Type": "AWS::EC2::SubnetRouteTableAssociation",
+      "Properties": {
+        "RouteTableId": {
+          "Ref": "prodVPCPrivateSubnet2RouteTableCDBE868D"
+        },
+        "SubnetId": {
+          "Ref": "prodVPCPrivateSubnet2Subnet04B92CA7"
+        }
+      },
+      "Metadata": {
+        "aws:cdk:path": "ecs-stack/prod/VPC/PrivateSubnet2/RouteTableAssociation"
+      }
+    },
+    "prodVPCPrivateSubnet2DefaultRouteC07EE54C": {
+      "Type": "AWS::EC2::Route",
+      "Properties": {
+        "RouteTableId": {
+          "Ref": "prodVPCPrivateSubnet2RouteTableCDBE868D"
+        },
+        "DestinationCidrBlock": "0.0.0.0/0",
+        "NatGatewayId": {
+          "Ref": "prodVPCPublicSubnet2NATGatewayF40B99E5"
+        }
+      },
+      "Metadata": {
+        "aws:cdk:path": "ecs-stack/prod/VPC/PrivateSubnet2/DefaultRoute"
+      }
+    },
+    "prodVPCIGW0B427BB6": {
+      "Type": "AWS::EC2::InternetGateway",
+      "Properties": {
+        "Tags": [
+          {
+            "Key": "Name",
+            "Value": "ecs-stack/prod/VPC"
+          }
+        ]
+      },
+      "Metadata": {
+        "aws:cdk:path": "ecs-stack/prod/VPC/IGW"
+      }
+    },
+    "prodVPCVPCGWDD93F813": {
+      "Type": "AWS::EC2::VPCGatewayAttachment",
+      "Properties": {
+        "VpcId": {
+          "Ref": "prodVPC05D050A5"
+        },
+        "InternetGatewayId": {
+          "Ref": "prodVPCIGW0B427BB6"
+        }
+      },
+      "Metadata": {
+        "aws:cdk:path": "ecs-stack/prod/VPC/VPCGW"
+      }
+    },
+    "prodALB6014B766": {
+      "Type": "AWS::ElasticLoadBalancingV2::LoadBalancer",
+      "Properties": {
+        "Scheme": "internet-facing",
+        "SecurityGroups": [
+          {
+            "Fn::GetAtt": [
+              "prodALBSecurityGroup73EC3DD1",
+              "GroupId"
+            ]
+          }
+        ],
+        "Subnets": [
+          {
+            "Ref": "prodVPCPublicSubnet1SubnetBD79F0E4"
+          },
+          {
+            "Ref": "prodVPCPublicSubnet2SubnetBD0F8E17"
+          }
+        ],
+        "Type": "application"
+      },
+      "DependsOn": [
+        "prodVPCPublicSubnet1DefaultRouteECAAF670",
+        "prodVPCPublicSubnet2DefaultRoute14E755F8"
+      ],
+      "Metadata": {
+        "aws:cdk:path": "ecs-stack/prod/ALB/Resource"
+      }
+    },
+    "prodALBSecurityGroup73EC3DD1": {
+      "Type": "AWS::EC2::SecurityGroup",
+      "Properties": {
+        "GroupDescription": "Automatically created Security Group for ELB ecsstackprodALB15656B4B",
+        "SecurityGroupIngress": [
+          {
+            "CidrIp": "0.0.0.0/0",
+            "Description": "Allow from anyone on port 80",
+            "FromPort": 80,
+            "IpProtocol": "tcp",
+            "ToPort": 80
+          },
+          {
+            "CidrIp": "0.0.0.0/0",
+            "Description": "Allow from anyone on port 443",
+            "FromPort": 443,
+            "IpProtocol": "tcp",
+            "ToPort": 443
+          }
+        ],
+        "VpcId": {
+          "Ref": "prodVPC05D050A5"
+        }
+      },
+      "Metadata": {
+        "aws:cdk:path": "ecs-stack/prod/ALB/SecurityGroup/Resource"
+      }
+    },
+    "prodALBSecurityGrouptoecsstackprodFargateServiceSecurityGroup3F6B27D35000AF4E378B": {
+      "Type": "AWS::EC2::SecurityGroupEgress",
+      "Properties": {
+        "GroupId": {
+          "Fn::GetAtt": [
+            "prodALBSecurityGroup73EC3DD1",
+            "GroupId"
+          ]
+        },
+        "IpProtocol": "tcp",
+        "Description": "Load balancer to target",
+        "DestinationSecurityGroupId": {
+          "Fn::GetAtt": [
+            "prodFargateServiceSecurityGroup5FF63DF0",
+            "GroupId"
+          ]
+        },
+        "FromPort": 5000,
+        "ToPort": 5000
+      },
+      "Metadata": {
+        "aws:cdk:path": "ecs-stack/prod/ALB/SecurityGroup/to ecsstackprodFargateServiceSecurityGroup3F6B27D3:5000"
+      }
+    },
+    "prodALBHTTPListener41F60B57": {
+      "Type": "AWS::ElasticLoadBalancingV2::Listener",
+      "Properties": {
+        "DefaultActions": [
+          {
+            "RedirectConfig": {
+              "Protocol": "HTTPS",
+              "StatusCode": "HTTP_301"
+            },
+            "Type": "redirect"
+          }
+        ],
+        "LoadBalancerArn": {
+          "Ref": "prodALB6014B766"
+        },
+        "Port": 80,
+        "Protocol": "HTTP"
+      },
+      "Metadata": {
+        "aws:cdk:path": "ecs-stack/prod/ALB/HTTPListener/Resource"
+      }
+    },
+    "prodALBHTTPSListenerAE63E292": {
+      "Type": "AWS::ElasticLoadBalancingV2::Listener",
+      "Properties": {
+        "DefaultActions": [
+          {
+            "TargetGroupArn": {
+              "Ref": "prodALBHTTPSListenerFargateServiceTargetGroup0990BEE5"
+            },
+            "Type": "forward"
+          }
+        ],
+        "LoadBalancerArn": {
+          "Ref": "prodALB6014B766"
+        },
+        "Port": 443,
+        "Protocol": "HTTPS",
+        "Certificates": [
+          {
+            "CertificateArn": "arn:aws:acm:us-west-1:312093006778:certificate/e00b73a0-f919-4ea0-a2d8-81f985331665"
+          }
+        ]
+      },
+      "Metadata": {
+        "aws:cdk:path": "ecs-stack/prod/ALB/HTTPSListener/Resource"
+      }
+    },
+    "prodALBHTTPSListenerFargateServiceTargetGroup0990BEE5": {
+      "Type": "AWS::ElasticLoadBalancingV2::TargetGroup",
+      "Properties": {
+        "Port": 5000,
+        "Protocol": "HTTP",
+        "TargetType": "ip",
+        "VpcId": {
+          "Ref": "prodVPC05D050A5"
+        }
+      },
+      "Metadata": {
+        "aws:cdk:path": "ecs-stack/prod/ALB/HTTPSListener/FargateServiceTargetGroup/Resource"
+      }
+    },
+    "prodDBSubnetGroup125E8662": {
+      "Type": "AWS::RDS::DBSubnetGroup",
+      "Properties": {
+        "DBSubnetGroupDescription": "Subnet group for DB database",
+        "SubnetIds": [
+          {
+            "Ref": "prodVPCPrivateSubnet1Subnet6794AAA7"
+          },
+          {
+            "Ref": "prodVPCPrivateSubnet2Subnet04B92CA7"
+          }
+        ]
+      },
+      "Metadata": {
+        "aws:cdk:path": "ecs-stack/prod/DB/SubnetGroup"
+      }
+    },
+    "prodDBSecurityGroup27027367": {
+      "Type": "AWS::EC2::SecurityGroup",
+      "Properties": {
+        "GroupDescription": "Security group for DB database",
+        "SecurityGroupEgress": [
+          {
+            "CidrIp": "0.0.0.0/0",
+            "Description": "Allow all outbound traffic by default",
+            "IpProtocol": "-1"
+          }
+        ],
+        "VpcId": {
+          "Ref": "prodVPC05D050A5"
+        }
+      },
+      "Metadata": {
+        "aws:cdk:path": "ecs-stack/prod/DB/SecurityGroup/Resource"
+      }
+    },
+    "prodDBSecurityGroupfromecsstackprodFargateServiceSecurityGroup3F6B27D3IndirectPortE8819DC9": {
+      "Type": "AWS::EC2::SecurityGroupIngress",
+      "Properties": {
+        "IpProtocol": "tcp",
+        "Description": "from ecsstackprodFargateServiceSecurityGroup3F6B27D3:{IndirectPort}",
+        "FromPort": {
+          "Fn::GetAtt": [
+            "prodDB19DA47CF",
+            "Endpoint.Port"
+          ]
+        },
+        "GroupId": {
+          "Fn::GetAtt": [
+            "prodDBSecurityGroup27027367",
+            "GroupId"
+          ]
+        },
+        "SourceSecurityGroupId": {
+          "Fn::GetAtt": [
+            "prodFargateServiceSecurityGroup5FF63DF0",
+            "GroupId"
+          ]
+        },
+        "ToPort": {
+          "Fn::GetAtt": [
+            "prodDB19DA47CF",
+            "Endpoint.Port"
+          ]
+        }
+      },
+      "Metadata": {
+        "aws:cdk:path": "ecs-stack/prod/DB/SecurityGroup/from ecsstackprodFargateServiceSecurityGroup3F6B27D3:{IndirectPort}"
+      }
+    },
+    "prodDBSecretB63E7E14": {
+      "Type": "AWS::SecretsManager::Secret",
+      "Properties": {
+        "GenerateSecretString": {
+          "ExcludeCharacters": "\"@/\\",
+          "GenerateStringKey": "password",
+          "PasswordLength": 30,
+          "SecretStringTemplate": "{\"username\":\"postgres\"}"
+        }
+      },
+      "Metadata": {
+        "aws:cdk:path": "ecs-stack/prod/DB/Secret/Resource"
+      }
+    },
+    "prodDBSecretAttachedSecret5F9B37C3": {
+      "Type": "AWS::SecretsManager::SecretTargetAttachment",
+      "Properties": {
+        "SecretId": {
+          "Ref": "prodDBSecretB63E7E14"
+        },
+        "TargetId": {
+          "Ref": "prodDB19DA47CF"
+        },
+        "TargetType": "AWS::RDS::DBInstance"
+      },
+      "Metadata": {
+        "aws:cdk:path": "ecs-stack/prod/DB/Secret/AttachedSecret/Resource"
+      }
+    },
+    "prodDB19DA47CF": {
+      "Type": "AWS::RDS::DBInstance",
+      "Properties": {
+        "DBInstanceClass": "db.t2.small",
+        "AllocatedStorage": "100",
+        "CopyTagsToSnapshot": true,
+        "DBSubnetGroupName": {
+          "Ref": "prodDBSubnetGroup125E8662"
+        },
+        "DeletionProtection": true,
+        "Engine": "postgres",
+        "MasterUsername": {
+          "Fn::Join": [
+            "",
+            [
+              "{{resolve:secretsmanager:",
+              {
+                "Ref": "prodDBSecretB63E7E14"
+              },
+              ":SecretString:username::}}"
+            ]
+          ]
+        },
+        "MasterUserPassword": {
+          "Fn::Join": [
+            "",
+            [
+              "{{resolve:secretsmanager:",
+              {
+                "Ref": "prodDBSecretB63E7E14"
+              },
+              ":SecretString:password::}}"
+            ]
+          ]
+        },
+        "StorageType": "gp2",
+        "VPCSecurityGroups": [
+          {
+            "Fn::GetAtt": [
+              "prodDBSecurityGroup27027367",
+              "GroupId"
+            ]
+          }
+        ]
+      },
+      "UpdateReplacePolicy": "Retain",
+      "DeletionPolicy": "Retain",
+      "Metadata": {
+        "aws:cdk:path": "ecs-stack/prod/DB/Resource"
+      }
+    },
+    "prodCluster9288F49D": {
+      "Type": "AWS::ECS::Cluster",
+      "Metadata": {
+        "aws:cdk:path": "ecs-stack/prod/Cluster/Resource"
+      }
+    },
+    "prodTaskDefTaskRole1294F326": {
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "ecs-tasks.amazonaws.com"
+              }
+            }
+          ],
+          "Version": "2012-10-17"
+        }
+      },
+      "Metadata": {
+        "aws:cdk:path": "ecs-stack/prod/TaskDef/TaskRole/Resource"
+      }
+    },
+    "prodTaskDef5D0A70F9": {
+      "Type": "AWS::ECS::TaskDefinition",
+      "Properties": {
+        "ContainerDefinitions": [
+          {
+            "Environment": [
+              {
+                "Name": "STAGE",
+                "Value": "prod"
+              },
+              {
+                "Name": "DATABASE_URL",
+                "Value": {
+                  "Fn::Join": [
+                    "",
+                    [
+                      {
+                        "Fn::GetAtt": [
+                          "prodDB19DA47CF",
+                          "Endpoint.Address"
+                        ]
+                      },
+                      ":",
+                      {
+                        "Fn::GetAtt": [
+                          "prodDB19DA47CF",
+                          "Endpoint.Port"
+                        ]
+                      }
+                    ]
+                  ]
+                }
+              },
+              {
+                "Name": "DATABASE_USERNAME",
+                "Value": "postgres"
+              }
+            ],
+            "Essential": true,
+            "Image": {
+              "Fn::Join": [
+                "",
+                [
+                  "312093006778.dkr.ecr.us-west-1.",
+                  {
+                    "Ref": "AWS::URLSuffix"
+                  },
+                  "/ecs-experiment:latest"
+                ]
+              ]
+            },
+            "LogConfiguration": {
+              "LogDriver": "awslogs",
+              "Options": {
+                "awslogs-group": {
+                  "Ref": "prodTaskDefWebLogGroup785DE79F"
+                },
+                "awslogs-stream-prefix": "prod-ECSCluster",
+                "awslogs-region": {
+                  "Ref": "AWS::Region"
+                }
+              }
+            },
+            "Name": "Web",
+            "PortMappings": [
+              {
+                "ContainerPort": 5000,
+                "Protocol": "tcp"
+              }
+            ],
+            "Secrets": [
+              {
+                "Name": "DATABASE_PASSWORD",
+                "ValueFrom": {
+                  "Ref": "prodDBSecretAttachedSecret5F9B37C3"
+                }
+              }
+            ]
+          }
+        ],
+        "Cpu": "256",
+        "ExecutionRoleArn": {
+          "Fn::GetAtt": [
+            "prodTaskDefExecutionRole257EB6D8",
+            "Arn"
+          ]
+        },
+        "Family": "ecsstackprodTaskDef0A101E67",
+        "Memory": "512",
+        "NetworkMode": "awsvpc",
+        "RequiresCompatibilities": [
+          "FARGATE"
+        ],
+        "TaskRoleArn": {
+          "Fn::GetAtt": [
+            "prodTaskDefTaskRole1294F326",
+            "Arn"
+          ]
+        }
+      },
+      "Metadata": {
+        "aws:cdk:path": "ecs-stack/prod/TaskDef/Resource"
+      }
+    },
+    "prodTaskDefWebLogGroup785DE79F": {
+      "Type": "AWS::Logs::LogGroup",
+      "UpdateReplacePolicy": "Retain",
+      "DeletionPolicy": "Retain",
+      "Metadata": {
+        "aws:cdk:path": "ecs-stack/prod/TaskDef/Web/LogGroup/Resource"
+      }
+    },
+    "prodTaskDefExecutionRole257EB6D8": {
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "ecs-tasks.amazonaws.com"
+              }
+            }
+          ],
+          "Version": "2012-10-17"
+        }
+      },
+      "Metadata": {
+        "aws:cdk:path": "ecs-stack/prod/TaskDef/ExecutionRole/Resource"
+      }
+    },
+    "prodTaskDefExecutionRoleDefaultPolicyC59EF026": {
+      "Type": "AWS::IAM::Policy",
+      "Properties": {
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": [
+                "ecr:BatchCheckLayerAvailability",
+                "ecr:GetDownloadUrlForLayer",
+                "ecr:BatchGetImage"
+              ],
+              "Effect": "Allow",
+              "Resource": "arn:aws:ecr:us-west-1:312093006778:repository/ecs-experiment"
+            },
+            {
+              "Action": "ecr:GetAuthorizationToken",
+              "Effect": "Allow",
+              "Resource": "*"
+            },
+            {
+              "Action": [
+                "logs:CreateLogStream",
+                "logs:PutLogEvents"
+              ],
+              "Effect": "Allow",
+              "Resource": {
+                "Fn::GetAtt": [
+                  "prodTaskDefWebLogGroup785DE79F",
+                  "Arn"
+                ]
+              }
+            },
+            {
+              "Action": "secretsmanager:GetSecretValue",
+              "Effect": "Allow",
+              "Resource": {
+                "Ref": "prodDBSecretAttachedSecret5F9B37C3"
+              }
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "PolicyName": "prodTaskDefExecutionRoleDefaultPolicyC59EF026",
+        "Roles": [
+          {
+            "Ref": "prodTaskDefExecutionRole257EB6D8"
+          }
+        ]
+      },
+      "Metadata": {
+        "aws:cdk:path": "ecs-stack/prod/TaskDef/ExecutionRole/DefaultPolicy/Resource"
+      }
+    },
+    "prodFargateServiceA1C0E60E": {
+      "Type": "AWS::ECS::Service",
+      "Properties": {
+        "Cluster": {
+          "Ref": "prodCluster9288F49D"
+        },
+        "DeploymentConfiguration": {
+          "MaximumPercent": 200,
+          "MinimumHealthyPercent": 50
+        },
+        "DesiredCount": 2,
+        "EnableECSManagedTags": false,
+        "HealthCheckGracePeriodSeconds": 60,
+        "LaunchType": "FARGATE",
+        "LoadBalancers": [
+          {
+            "ContainerName": "Web",
+            "ContainerPort": 5000,
+            "TargetGroupArn": {
+              "Ref": "prodALBHTTPSListenerFargateServiceTargetGroup0990BEE5"
+            }
+          }
+        ],
+        "NetworkConfiguration": {
+          "AwsvpcConfiguration": {
+            "AssignPublicIp": "DISABLED",
+            "SecurityGroups": [
+              {
+                "Fn::GetAtt": [
+                  "prodFargateServiceSecurityGroup5FF63DF0",
+                  "GroupId"
+                ]
+              }
+            ],
+            "Subnets": [
+              {
+                "Ref": "prodVPCPrivateSubnet1Subnet6794AAA7"
+              },
+              {
+                "Ref": "prodVPCPrivateSubnet2Subnet04B92CA7"
+              }
+            ]
+          }
+        },
+        "TaskDefinition": {
+          "Ref": "prodTaskDef5D0A70F9"
+        }
+      },
+      "DependsOn": [
+        "prodALBHTTPSListenerFargateServiceTargetGroup0990BEE5",
+        "prodALBHTTPSListenerAE63E292"
+      ],
+      "Metadata": {
+        "aws:cdk:path": "ecs-stack/prod/FargateService/Service"
+      }
+    },
+    "prodFargateServiceSecurityGroup5FF63DF0": {
+      "Type": "AWS::EC2::SecurityGroup",
+      "Properties": {
+        "GroupDescription": "ecs-stack/prod/FargateService/SecurityGroup",
+        "SecurityGroupEgress": [
+          {
+            "CidrIp": "0.0.0.0/0",
+            "Description": "Allow all outbound traffic by default",
+            "IpProtocol": "-1"
+          }
+        ],
+        "VpcId": {
+          "Ref": "prodVPC05D050A5"
+        }
+      },
+      "Metadata": {
+        "aws:cdk:path": "ecs-stack/prod/FargateService/SecurityGroup/Resource"
+      }
+    },
+    "prodFargateServiceSecurityGroupfromecsstackprodALBSecurityGroupC62EFF0E50008B939710": {
+      "Type": "AWS::EC2::SecurityGroupIngress",
+      "Properties": {
+        "IpProtocol": "tcp",
+        "Description": "Load balancer to target",
+        "FromPort": 5000,
+        "GroupId": {
+          "Fn::GetAtt": [
+            "prodFargateServiceSecurityGroup5FF63DF0",
+            "GroupId"
+          ]
+        },
+        "SourceSecurityGroupId": {
+          "Fn::GetAtt": [
+            "prodALBSecurityGroup73EC3DD1",
+            "GroupId"
+          ]
+        },
+        "ToPort": 5000
+      },
+      "Metadata": {
+        "aws:cdk:path": "ecs-stack/prod/FargateService/SecurityGroup/from ecsstackprodALBSecurityGroupC62EFF0E:5000"
+      }
+    },
+    "stagingVPCDF88DF06": {
+      "Type": "AWS::EC2::VPC",
+      "Properties": {
+        "CidrBlock": "10.0.0.0/21",
+        "EnableDnsHostnames": true,
+        "EnableDnsSupport": true,
+        "InstanceTenancy": "default",
+        "Tags": [
+          {
+            "Key": "Name",
+            "Value": "ecs-stack/staging/VPC"
+          }
+        ]
+      },
+      "Metadata": {
+        "aws:cdk:path": "ecs-stack/staging/VPC/Resource"
+      }
+    },
+    "stagingVPCPublicSubnet1SubnetF096E9E2": {
+      "Type": "AWS::EC2::Subnet",
+      "Properties": {
+        "CidrBlock": "10.0.0.0/23",
+        "VpcId": {
+          "Ref": "stagingVPCDF88DF06"
+        },
+        "AvailabilityZone": {
+          "Fn::Select": [
+            0,
+            {
+              "Fn::GetAZs": ""
+            }
+          ]
+        },
+        "MapPublicIpOnLaunch": true,
+        "Tags": [
+          {
+            "Key": "Name",
+            "Value": "ecs-stack/staging/VPC/PublicSubnet1"
+          },
+          {
+            "Key": "aws-cdk:subnet-name",
+            "Value": "Public"
+          },
+          {
+            "Key": "aws-cdk:subnet-type",
+            "Value": "Public"
+          }
+        ]
+      },
+      "Metadata": {
+        "aws:cdk:path": "ecs-stack/staging/VPC/PublicSubnet1/Subnet"
+      }
+    },
+    "stagingVPCPublicSubnet1RouteTableB733F0B7": {
+      "Type": "AWS::EC2::RouteTable",
+      "Properties": {
+        "VpcId": {
+          "Ref": "stagingVPCDF88DF06"
+        },
+        "Tags": [
+          {
+            "Key": "Name",
+            "Value": "ecs-stack/staging/VPC/PublicSubnet1"
+          }
+        ]
+      },
+      "Metadata": {
+        "aws:cdk:path": "ecs-stack/staging/VPC/PublicSubnet1/RouteTable"
+      }
+    },
+    "stagingVPCPublicSubnet1RouteTableAssociation5764017A": {
+      "Type": "AWS::EC2::SubnetRouteTableAssociation",
+      "Properties": {
+        "RouteTableId": {
+          "Ref": "stagingVPCPublicSubnet1RouteTableB733F0B7"
+        },
+        "SubnetId": {
+          "Ref": "stagingVPCPublicSubnet1SubnetF096E9E2"
+        }
+      },
+      "Metadata": {
+        "aws:cdk:path": "ecs-stack/staging/VPC/PublicSubnet1/RouteTableAssociation"
+      }
+    },
+    "stagingVPCPublicSubnet1DefaultRouteBD3C2F4E": {
+      "Type": "AWS::EC2::Route",
+      "Properties": {
+        "RouteTableId": {
+          "Ref": "stagingVPCPublicSubnet1RouteTableB733F0B7"
+        },
+        "DestinationCidrBlock": "0.0.0.0/0",
+        "GatewayId": {
+          "Ref": "stagingVPCIGW75476555"
+        }
+      },
+      "DependsOn": [
+        "stagingVPCVPCGWE231C3BC"
+      ],
+      "Metadata": {
+        "aws:cdk:path": "ecs-stack/staging/VPC/PublicSubnet1/DefaultRoute"
+      }
+    },
+    "stagingVPCPublicSubnet1EIP7C5AD693": {
+      "Type": "AWS::EC2::EIP",
+      "Properties": {
+        "Domain": "vpc",
+        "Tags": [
+          {
+            "Key": "Name",
+            "Value": "ecs-stack/staging/VPC/PublicSubnet1"
+          }
+        ]
+      },
+      "Metadata": {
+        "aws:cdk:path": "ecs-stack/staging/VPC/PublicSubnet1/EIP"
+      }
+    },
+    "stagingVPCPublicSubnet1NATGateway36438E83": {
+      "Type": "AWS::EC2::NatGateway",
+      "Properties": {
+        "AllocationId": {
+          "Fn::GetAtt": [
+            "stagingVPCPublicSubnet1EIP7C5AD693",
+            "AllocationId"
+          ]
+        },
+        "SubnetId": {
+          "Ref": "stagingVPCPublicSubnet1SubnetF096E9E2"
+        },
+        "Tags": [
+          {
+            "Key": "Name",
+            "Value": "ecs-stack/staging/VPC/PublicSubnet1"
+          }
+        ]
+      },
+      "Metadata": {
+        "aws:cdk:path": "ecs-stack/staging/VPC/PublicSubnet1/NATGateway"
+      }
+    },
+    "stagingVPCPublicSubnet2Subnet2271A13F": {
+      "Type": "AWS::EC2::Subnet",
+      "Properties": {
+        "CidrBlock": "10.0.2.0/23",
+        "VpcId": {
+          "Ref": "stagingVPCDF88DF06"
+        },
+        "AvailabilityZone": {
+          "Fn::Select": [
+            1,
+            {
+              "Fn::GetAZs": ""
+            }
+          ]
+        },
+        "MapPublicIpOnLaunch": true,
+        "Tags": [
+          {
+            "Key": "Name",
+            "Value": "ecs-stack/staging/VPC/PublicSubnet2"
+          },
+          {
+            "Key": "aws-cdk:subnet-name",
+            "Value": "Public"
+          },
+          {
+            "Key": "aws-cdk:subnet-type",
+            "Value": "Public"
+          }
+        ]
+      },
+      "Metadata": {
+        "aws:cdk:path": "ecs-stack/staging/VPC/PublicSubnet2/Subnet"
+      }
+    },
+    "stagingVPCPublicSubnet2RouteTableB2CBC89F": {
+      "Type": "AWS::EC2::RouteTable",
+      "Properties": {
+        "VpcId": {
+          "Ref": "stagingVPCDF88DF06"
+        },
+        "Tags": [
+          {
+            "Key": "Name",
+            "Value": "ecs-stack/staging/VPC/PublicSubnet2"
+          }
+        ]
+      },
+      "Metadata": {
+        "aws:cdk:path": "ecs-stack/staging/VPC/PublicSubnet2/RouteTable"
+      }
+    },
+    "stagingVPCPublicSubnet2RouteTableAssociation38EB9584": {
+      "Type": "AWS::EC2::SubnetRouteTableAssociation",
+      "Properties": {
+        "RouteTableId": {
+          "Ref": "stagingVPCPublicSubnet2RouteTableB2CBC89F"
+        },
+        "SubnetId": {
+          "Ref": "stagingVPCPublicSubnet2Subnet2271A13F"
+        }
+      },
+      "Metadata": {
+        "aws:cdk:path": "ecs-stack/staging/VPC/PublicSubnet2/RouteTableAssociation"
+      }
+    },
+    "stagingVPCPublicSubnet2DefaultRoute34417EEB": {
+      "Type": "AWS::EC2::Route",
+      "Properties": {
+        "RouteTableId": {
+          "Ref": "stagingVPCPublicSubnet2RouteTableB2CBC89F"
+        },
+        "DestinationCidrBlock": "0.0.0.0/0",
+        "GatewayId": {
+          "Ref": "stagingVPCIGW75476555"
+        }
+      },
+      "DependsOn": [
+        "stagingVPCVPCGWE231C3BC"
+      ],
+      "Metadata": {
+        "aws:cdk:path": "ecs-stack/staging/VPC/PublicSubnet2/DefaultRoute"
+      }
+    },
+    "stagingVPCPublicSubnet2EIP4DD6B429": {
+      "Type": "AWS::EC2::EIP",
+      "Properties": {
+        "Domain": "vpc",
+        "Tags": [
+          {
+            "Key": "Name",
+            "Value": "ecs-stack/staging/VPC/PublicSubnet2"
+          }
+        ]
+      },
+      "Metadata": {
+        "aws:cdk:path": "ecs-stack/staging/VPC/PublicSubnet2/EIP"
+      }
+    },
+    "stagingVPCPublicSubnet2NATGateway8470BC2E": {
+      "Type": "AWS::EC2::NatGateway",
+      "Properties": {
+        "AllocationId": {
+          "Fn::GetAtt": [
+            "stagingVPCPublicSubnet2EIP4DD6B429",
+            "AllocationId"
+          ]
+        },
+        "SubnetId": {
+          "Ref": "stagingVPCPublicSubnet2Subnet2271A13F"
+        },
+        "Tags": [
+          {
+            "Key": "Name",
+            "Value": "ecs-stack/staging/VPC/PublicSubnet2"
+          }
+        ]
+      },
+      "Metadata": {
+        "aws:cdk:path": "ecs-stack/staging/VPC/PublicSubnet2/NATGateway"
+      }
+    },
+    "stagingVPCPrivateSubnet1SubnetA5864E19": {
+      "Type": "AWS::EC2::Subnet",
+      "Properties": {
+        "CidrBlock": "10.0.4.0/23",
+        "VpcId": {
+          "Ref": "stagingVPCDF88DF06"
+        },
+        "AvailabilityZone": {
+          "Fn::Select": [
+            0,
+            {
+              "Fn::GetAZs": ""
+            }
+          ]
+        },
+        "MapPublicIpOnLaunch": false,
+        "Tags": [
+          {
+            "Key": "Name",
+            "Value": "ecs-stack/staging/VPC/PrivateSubnet1"
+          },
+          {
+            "Key": "aws-cdk:subnet-name",
+            "Value": "Private"
+          },
+          {
+            "Key": "aws-cdk:subnet-type",
+            "Value": "Private"
+          }
+        ]
+      },
+      "Metadata": {
+        "aws:cdk:path": "ecs-stack/staging/VPC/PrivateSubnet1/Subnet"
+      }
+    },
+    "stagingVPCPrivateSubnet1RouteTableA65B6A8F": {
+      "Type": "AWS::EC2::RouteTable",
+      "Properties": {
+        "VpcId": {
+          "Ref": "stagingVPCDF88DF06"
+        },
+        "Tags": [
+          {
+            "Key": "Name",
+            "Value": "ecs-stack/staging/VPC/PrivateSubnet1"
+          }
+        ]
+      },
+      "Metadata": {
+        "aws:cdk:path": "ecs-stack/staging/VPC/PrivateSubnet1/RouteTable"
+      }
+    },
+    "stagingVPCPrivateSubnet1RouteTableAssociation1170F01B": {
+      "Type": "AWS::EC2::SubnetRouteTableAssociation",
+      "Properties": {
+        "RouteTableId": {
+          "Ref": "stagingVPCPrivateSubnet1RouteTableA65B6A8F"
+        },
+        "SubnetId": {
+          "Ref": "stagingVPCPrivateSubnet1SubnetA5864E19"
+        }
+      },
+      "Metadata": {
+        "aws:cdk:path": "ecs-stack/staging/VPC/PrivateSubnet1/RouteTableAssociation"
+      }
+    },
+    "stagingVPCPrivateSubnet1DefaultRoute37465151": {
+      "Type": "AWS::EC2::Route",
+      "Properties": {
+        "RouteTableId": {
+          "Ref": "stagingVPCPrivateSubnet1RouteTableA65B6A8F"
+        },
+        "DestinationCidrBlock": "0.0.0.0/0",
+        "NatGatewayId": {
+          "Ref": "stagingVPCPublicSubnet1NATGateway36438E83"
+        }
+      },
+      "Metadata": {
+        "aws:cdk:path": "ecs-stack/staging/VPC/PrivateSubnet1/DefaultRoute"
+      }
+    },
+    "stagingVPCPrivateSubnet2Subnet3EF81AA2": {
+      "Type": "AWS::EC2::Subnet",
+      "Properties": {
+        "CidrBlock": "10.0.6.0/23",
+        "VpcId": {
+          "Ref": "stagingVPCDF88DF06"
+        },
+        "AvailabilityZone": {
+          "Fn::Select": [
+            1,
+            {
+              "Fn::GetAZs": ""
+            }
+          ]
+        },
+        "MapPublicIpOnLaunch": false,
+        "Tags": [
+          {
+            "Key": "Name",
+            "Value": "ecs-stack/staging/VPC/PrivateSubnet2"
+          },
+          {
+            "Key": "aws-cdk:subnet-name",
+            "Value": "Private"
+          },
+          {
+            "Key": "aws-cdk:subnet-type",
+            "Value": "Private"
+          }
+        ]
+      },
+      "Metadata": {
+        "aws:cdk:path": "ecs-stack/staging/VPC/PrivateSubnet2/Subnet"
+      }
+    },
+    "stagingVPCPrivateSubnet2RouteTableEDFA1ED2": {
+      "Type": "AWS::EC2::RouteTable",
+      "Properties": {
+        "VpcId": {
+          "Ref": "stagingVPCDF88DF06"
+        },
+        "Tags": [
+          {
+            "Key": "Name",
+            "Value": "ecs-stack/staging/VPC/PrivateSubnet2"
+          }
+        ]
+      },
+      "Metadata": {
+        "aws:cdk:path": "ecs-stack/staging/VPC/PrivateSubnet2/RouteTable"
+      }
+    },
+    "stagingVPCPrivateSubnet2RouteTableAssociation47BCEA7B": {
+      "Type": "AWS::EC2::SubnetRouteTableAssociation",
+      "Properties": {
+        "RouteTableId": {
+          "Ref": "stagingVPCPrivateSubnet2RouteTableEDFA1ED2"
+        },
+        "SubnetId": {
+          "Ref": "stagingVPCPrivateSubnet2Subnet3EF81AA2"
+        }
+      },
+      "Metadata": {
+        "aws:cdk:path": "ecs-stack/staging/VPC/PrivateSubnet2/RouteTableAssociation"
+      }
+    },
+    "stagingVPCPrivateSubnet2DefaultRouteBBB0C856": {
+      "Type": "AWS::EC2::Route",
+      "Properties": {
+        "RouteTableId": {
+          "Ref": "stagingVPCPrivateSubnet2RouteTableEDFA1ED2"
+        },
+        "DestinationCidrBlock": "0.0.0.0/0",
+        "NatGatewayId": {
+          "Ref": "stagingVPCPublicSubnet2NATGateway8470BC2E"
+        }
+      },
+      "Metadata": {
+        "aws:cdk:path": "ecs-stack/staging/VPC/PrivateSubnet2/DefaultRoute"
+      }
+    },
+    "stagingVPCIGW75476555": {
+      "Type": "AWS::EC2::InternetGateway",
+      "Properties": {
+        "Tags": [
+          {
+            "Key": "Name",
+            "Value": "ecs-stack/staging/VPC"
+          }
+        ]
+      },
+      "Metadata": {
+        "aws:cdk:path": "ecs-stack/staging/VPC/IGW"
+      }
+    },
+    "stagingVPCVPCGWE231C3BC": {
+      "Type": "AWS::EC2::VPCGatewayAttachment",
+      "Properties": {
+        "VpcId": {
+          "Ref": "stagingVPCDF88DF06"
+        },
+        "InternetGatewayId": {
+          "Ref": "stagingVPCIGW75476555"
+        }
+      },
+      "Metadata": {
+        "aws:cdk:path": "ecs-stack/staging/VPC/VPCGW"
+      }
+    },
+    "stagingALB210AED05": {
+      "Type": "AWS::ElasticLoadBalancingV2::LoadBalancer",
+      "Properties": {
+        "Scheme": "internet-facing",
+        "SecurityGroups": [
+          {
+            "Fn::GetAtt": [
+              "stagingALBSecurityGroup920BDA99",
+              "GroupId"
+            ]
+          }
+        ],
+        "Subnets": [
+          {
+            "Ref": "stagingVPCPublicSubnet1SubnetF096E9E2"
+          },
+          {
+            "Ref": "stagingVPCPublicSubnet2Subnet2271A13F"
+          }
+        ],
+        "Type": "application"
+      },
+      "DependsOn": [
+        "stagingVPCPublicSubnet1DefaultRouteBD3C2F4E",
+        "stagingVPCPublicSubnet2DefaultRoute34417EEB"
+      ],
+      "Metadata": {
+        "aws:cdk:path": "ecs-stack/staging/ALB/Resource"
+      }
+    },
+    "stagingALBSecurityGroup920BDA99": {
+      "Type": "AWS::EC2::SecurityGroup",
+      "Properties": {
+        "GroupDescription": "Automatically created Security Group for ELB ecsstackstagingALB8C878BB8",
+        "SecurityGroupIngress": [
+          {
+            "CidrIp": "0.0.0.0/0",
+            "Description": "Allow from anyone on port 80",
+            "FromPort": 80,
+            "IpProtocol": "tcp",
+            "ToPort": 80
+          },
+          {
+            "CidrIp": "0.0.0.0/0",
+            "Description": "Allow from anyone on port 443",
+            "FromPort": 443,
+            "IpProtocol": "tcp",
+            "ToPort": 443
+          }
+        ],
+        "VpcId": {
+          "Ref": "stagingVPCDF88DF06"
+        }
+      },
+      "Metadata": {
+        "aws:cdk:path": "ecs-stack/staging/ALB/SecurityGroup/Resource"
+      }
+    },
+    "stagingALBSecurityGrouptoecsstackstagingFargateServiceSecurityGroup8A4EBEFA5000A5C890BF": {
+      "Type": "AWS::EC2::SecurityGroupEgress",
+      "Properties": {
+        "GroupId": {
+          "Fn::GetAtt": [
+            "stagingALBSecurityGroup920BDA99",
+            "GroupId"
+          ]
+        },
+        "IpProtocol": "tcp",
+        "Description": "Load balancer to target",
+        "DestinationSecurityGroupId": {
+          "Fn::GetAtt": [
+            "stagingFargateServiceSecurityGroupE0F79EF2",
+            "GroupId"
+          ]
+        },
+        "FromPort": 5000,
+        "ToPort": 5000
+      },
+      "Metadata": {
+        "aws:cdk:path": "ecs-stack/staging/ALB/SecurityGroup/to ecsstackstagingFargateServiceSecurityGroup8A4EBEFA:5000"
+      }
+    },
+    "stagingALBHTTPListener79DC4161": {
+      "Type": "AWS::ElasticLoadBalancingV2::Listener",
+      "Properties": {
+        "DefaultActions": [
+          {
+            "RedirectConfig": {
+              "Protocol": "HTTPS",
+              "StatusCode": "HTTP_301"
+            },
+            "Type": "redirect"
+          }
+        ],
+        "LoadBalancerArn": {
+          "Ref": "stagingALB210AED05"
+        },
+        "Port": 80,
+        "Protocol": "HTTP"
+      },
+      "Metadata": {
+        "aws:cdk:path": "ecs-stack/staging/ALB/HTTPListener/Resource"
+      }
+    },
+    "stagingALBHTTPSListenerC5270FAD": {
+      "Type": "AWS::ElasticLoadBalancingV2::Listener",
+      "Properties": {
+        "DefaultActions": [
+          {
+            "TargetGroupArn": {
+              "Ref": "stagingALBHTTPSListenerFargateServiceTargetGroupF5B8FB86"
+            },
+            "Type": "forward"
+          }
+        ],
+        "LoadBalancerArn": {
+          "Ref": "stagingALB210AED05"
+        },
+        "Port": 443,
+        "Protocol": "HTTPS",
+        "Certificates": [
+          {
+            "CertificateArn": "arn:aws:acm:us-west-1:312093006778:certificate/e00b73a0-f919-4ea0-a2d8-81f985331665"
+          }
+        ]
+      },
+      "Metadata": {
+        "aws:cdk:path": "ecs-stack/staging/ALB/HTTPSListener/Resource"
+      }
+    },
+    "stagingALBHTTPSListenerFargateServiceTargetGroupF5B8FB86": {
+      "Type": "AWS::ElasticLoadBalancingV2::TargetGroup",
+      "Properties": {
+        "Port": 5000,
+        "Protocol": "HTTP",
+        "TargetType": "ip",
+        "VpcId": {
+          "Ref": "stagingVPCDF88DF06"
+        }
+      },
+      "Metadata": {
+        "aws:cdk:path": "ecs-stack/staging/ALB/HTTPSListener/FargateServiceTargetGroup/Resource"
+      }
+    },
+    "stagingDBSubnetGroup126B98C2": {
+      "Type": "AWS::RDS::DBSubnetGroup",
+      "Properties": {
+        "DBSubnetGroupDescription": "Subnet group for DB database",
+        "SubnetIds": [
+          {
+            "Ref": "stagingVPCPrivateSubnet1SubnetA5864E19"
+          },
+          {
+            "Ref": "stagingVPCPrivateSubnet2Subnet3EF81AA2"
+          }
+        ]
+      },
+      "Metadata": {
+        "aws:cdk:path": "ecs-stack/staging/DB/SubnetGroup"
+      }
+    },
+    "stagingDBSecurityGroupEB1F3248": {
+      "Type": "AWS::EC2::SecurityGroup",
+      "Properties": {
+        "GroupDescription": "Security group for DB database",
+        "SecurityGroupEgress": [
+          {
+            "CidrIp": "0.0.0.0/0",
+            "Description": "Allow all outbound traffic by default",
+            "IpProtocol": "-1"
+          }
+        ],
+        "VpcId": {
+          "Ref": "stagingVPCDF88DF06"
+        }
+      },
+      "Metadata": {
+        "aws:cdk:path": "ecs-stack/staging/DB/SecurityGroup/Resource"
+      }
+    },
+    "stagingDBSecurityGroupfromecsstackstagingFargateServiceSecurityGroup8A4EBEFAIndirectPort98388686": {
+      "Type": "AWS::EC2::SecurityGroupIngress",
+      "Properties": {
+        "IpProtocol": "tcp",
+        "Description": "from ecsstackstagingFargateServiceSecurityGroup8A4EBEFA:{IndirectPort}",
+        "FromPort": {
+          "Fn::GetAtt": [
+            "stagingDBF99FC939",
+            "Endpoint.Port"
+          ]
+        },
+        "GroupId": {
+          "Fn::GetAtt": [
+            "stagingDBSecurityGroupEB1F3248",
+            "GroupId"
+          ]
+        },
+        "SourceSecurityGroupId": {
+          "Fn::GetAtt": [
+            "stagingFargateServiceSecurityGroupE0F79EF2",
+            "GroupId"
+          ]
+        },
+        "ToPort": {
+          "Fn::GetAtt": [
+            "stagingDBF99FC939",
+            "Endpoint.Port"
+          ]
+        }
+      },
+      "Metadata": {
+        "aws:cdk:path": "ecs-stack/staging/DB/SecurityGroup/from ecsstackstagingFargateServiceSecurityGroup8A4EBEFA:{IndirectPort}"
+      }
+    },
+    "stagingDBSecretF8227C4F": {
+      "Type": "AWS::SecretsManager::Secret",
+      "Properties": {
+        "GenerateSecretString": {
+          "ExcludeCharacters": "\"@/\\",
+          "GenerateStringKey": "password",
+          "PasswordLength": 30,
+          "SecretStringTemplate": "{\"username\":\"postgres\"}"
+        }
+      },
+      "Metadata": {
+        "aws:cdk:path": "ecs-stack/staging/DB/Secret/Resource"
+      }
+    },
+    "stagingDBSecretAttachedSecret80A24E75": {
+      "Type": "AWS::SecretsManager::SecretTargetAttachment",
+      "Properties": {
+        "SecretId": {
+          "Ref": "stagingDBSecretF8227C4F"
+        },
+        "TargetId": {
+          "Ref": "stagingDBF99FC939"
+        },
+        "TargetType": "AWS::RDS::DBInstance"
+      },
+      "Metadata": {
+        "aws:cdk:path": "ecs-stack/staging/DB/Secret/AttachedSecret/Resource"
+      }
+    },
+    "stagingDBF99FC939": {
+      "Type": "AWS::RDS::DBInstance",
+      "Properties": {
+        "DBInstanceClass": "db.t2.small",
+        "AllocatedStorage": "100",
+        "CopyTagsToSnapshot": true,
+        "DBSubnetGroupName": {
+          "Ref": "stagingDBSubnetGroup126B98C2"
+        },
+        "DeletionProtection": true,
+        "Engine": "postgres",
+        "MasterUsername": {
+          "Fn::Join": [
+            "",
+            [
+              "{{resolve:secretsmanager:",
+              {
+                "Ref": "stagingDBSecretF8227C4F"
+              },
+              ":SecretString:username::}}"
+            ]
+          ]
+        },
+        "MasterUserPassword": {
+          "Fn::Join": [
+            "",
+            [
+              "{{resolve:secretsmanager:",
+              {
+                "Ref": "stagingDBSecretF8227C4F"
+              },
+              ":SecretString:password::}}"
+            ]
+          ]
+        },
+        "StorageType": "gp2",
+        "VPCSecurityGroups": [
+          {
+            "Fn::GetAtt": [
+              "stagingDBSecurityGroupEB1F3248",
+              "GroupId"
+            ]
+          }
+        ]
+      },
+      "UpdateReplacePolicy": "Retain",
+      "DeletionPolicy": "Retain",
+      "Metadata": {
+        "aws:cdk:path": "ecs-stack/staging/DB/Resource"
+      }
+    },
+    "stagingCluster0E743F35": {
+      "Type": "AWS::ECS::Cluster",
+      "Metadata": {
+        "aws:cdk:path": "ecs-stack/staging/Cluster/Resource"
+      }
+    },
+    "stagingTaskDefTaskRole110AF896": {
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "ecs-tasks.amazonaws.com"
+              }
+            }
+          ],
+          "Version": "2012-10-17"
+        }
+      },
+      "Metadata": {
+        "aws:cdk:path": "ecs-stack/staging/TaskDef/TaskRole/Resource"
+      }
+    },
+    "stagingTaskDefA314A7BB": {
+      "Type": "AWS::ECS::TaskDefinition",
+      "Properties": {
+        "ContainerDefinitions": [
+          {
+            "Environment": [
+              {
+                "Name": "STAGE",
+                "Value": "staging"
+              },
+              {
+                "Name": "DATABASE_URL",
+                "Value": {
+                  "Fn::Join": [
+                    "",
+                    [
+                      {
+                        "Fn::GetAtt": [
+                          "stagingDBF99FC939",
+                          "Endpoint.Address"
+                        ]
+                      },
+                      ":",
+                      {
+                        "Fn::GetAtt": [
+                          "stagingDBF99FC939",
+                          "Endpoint.Port"
+                        ]
+                      }
+                    ]
+                  ]
+                }
+              },
+              {
+                "Name": "DATABASE_USERNAME",
+                "Value": "postgres"
+              }
+            ],
+            "Essential": true,
+            "Image": {
+              "Fn::Join": [
+                "",
+                [
+                  "312093006778.dkr.ecr.us-west-1.",
+                  {
+                    "Ref": "AWS::URLSuffix"
+                  },
+                  "/ecs-experiment:latest"
+                ]
+              ]
+            },
+            "LogConfiguration": {
+              "LogDriver": "awslogs",
+              "Options": {
+                "awslogs-group": {
+                  "Ref": "stagingTaskDefWebLogGroup197B9372"
+                },
+                "awslogs-stream-prefix": "staging-ECSCluster",
+                "awslogs-region": {
+                  "Ref": "AWS::Region"
+                }
+              }
+            },
+            "Name": "Web",
+            "PortMappings": [
+              {
+                "ContainerPort": 5000,
+                "Protocol": "tcp"
+              }
+            ],
+            "Secrets": [
+              {
+                "Name": "DATABASE_PASSWORD",
+                "ValueFrom": {
+                  "Ref": "stagingDBSecretAttachedSecret80A24E75"
+                }
+              }
+            ]
+          }
+        ],
+        "Cpu": "256",
+        "ExecutionRoleArn": {
+          "Fn::GetAtt": [
+            "stagingTaskDefExecutionRole7F495404",
+            "Arn"
+          ]
+        },
+        "Family": "ecsstackstagingTaskDef0B7D9DFC",
+        "Memory": "512",
+        "NetworkMode": "awsvpc",
+        "RequiresCompatibilities": [
+          "FARGATE"
+        ],
+        "TaskRoleArn": {
+          "Fn::GetAtt": [
+            "stagingTaskDefTaskRole110AF896",
+            "Arn"
+          ]
+        }
+      },
+      "Metadata": {
+        "aws:cdk:path": "ecs-stack/staging/TaskDef/Resource"
+      }
+    },
+    "stagingTaskDefWebLogGroup197B9372": {
+      "Type": "AWS::Logs::LogGroup",
+      "UpdateReplacePolicy": "Retain",
+      "DeletionPolicy": "Retain",
+      "Metadata": {
+        "aws:cdk:path": "ecs-stack/staging/TaskDef/Web/LogGroup/Resource"
+      }
+    },
+    "stagingTaskDefExecutionRole7F495404": {
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "ecs-tasks.amazonaws.com"
+              }
+            }
+          ],
+          "Version": "2012-10-17"
+        }
+      },
+      "Metadata": {
+        "aws:cdk:path": "ecs-stack/staging/TaskDef/ExecutionRole/Resource"
+      }
+    },
+    "stagingTaskDefExecutionRoleDefaultPolicy9C29B924": {
+      "Type": "AWS::IAM::Policy",
+      "Properties": {
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": [
+                "ecr:BatchCheckLayerAvailability",
+                "ecr:GetDownloadUrlForLayer",
+                "ecr:BatchGetImage"
+              ],
+              "Effect": "Allow",
+              "Resource": "arn:aws:ecr:us-west-1:312093006778:repository/ecs-experiment"
+            },
+            {
+              "Action": "ecr:GetAuthorizationToken",
+              "Effect": "Allow",
+              "Resource": "*"
+            },
+            {
+              "Action": [
+                "logs:CreateLogStream",
+                "logs:PutLogEvents"
+              ],
+              "Effect": "Allow",
+              "Resource": {
+                "Fn::GetAtt": [
+                  "stagingTaskDefWebLogGroup197B9372",
+                  "Arn"
+                ]
+              }
+            },
+            {
+              "Action": "secretsmanager:GetSecretValue",
+              "Effect": "Allow",
+              "Resource": {
+                "Ref": "stagingDBSecretAttachedSecret80A24E75"
+              }
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "PolicyName": "stagingTaskDefExecutionRoleDefaultPolicy9C29B924",
+        "Roles": [
+          {
+            "Ref": "stagingTaskDefExecutionRole7F495404"
+          }
+        ]
+      },
+      "Metadata": {
+        "aws:cdk:path": "ecs-stack/staging/TaskDef/ExecutionRole/DefaultPolicy/Resource"
+      }
+    },
+    "stagingFargateService759B8F04": {
+      "Type": "AWS::ECS::Service",
+      "Properties": {
+        "Cluster": {
+          "Ref": "stagingCluster0E743F35"
+        },
+        "DeploymentConfiguration": {
+          "MaximumPercent": 200,
+          "MinimumHealthyPercent": 50
+        },
+        "DesiredCount": 2,
+        "EnableECSManagedTags": false,
+        "HealthCheckGracePeriodSeconds": 60,
+        "LaunchType": "FARGATE",
+        "LoadBalancers": [
+          {
+            "ContainerName": "Web",
+            "ContainerPort": 5000,
+            "TargetGroupArn": {
+              "Ref": "stagingALBHTTPSListenerFargateServiceTargetGroupF5B8FB86"
+            }
+          }
+        ],
+        "NetworkConfiguration": {
+          "AwsvpcConfiguration": {
+            "AssignPublicIp": "DISABLED",
+            "SecurityGroups": [
+              {
+                "Fn::GetAtt": [
+                  "stagingFargateServiceSecurityGroupE0F79EF2",
+                  "GroupId"
+                ]
+              }
+            ],
+            "Subnets": [
+              {
+                "Ref": "stagingVPCPrivateSubnet1SubnetA5864E19"
+              },
+              {
+                "Ref": "stagingVPCPrivateSubnet2Subnet3EF81AA2"
+              }
+            ]
+          }
+        },
+        "TaskDefinition": {
+          "Ref": "stagingTaskDefA314A7BB"
+        }
+      },
+      "DependsOn": [
+        "stagingALBHTTPSListenerFargateServiceTargetGroupF5B8FB86",
+        "stagingALBHTTPSListenerC5270FAD"
+      ],
+      "Metadata": {
+        "aws:cdk:path": "ecs-stack/staging/FargateService/Service"
+      }
+    },
+    "stagingFargateServiceSecurityGroupE0F79EF2": {
+      "Type": "AWS::EC2::SecurityGroup",
+      "Properties": {
+        "GroupDescription": "ecs-stack/staging/FargateService/SecurityGroup",
+        "SecurityGroupEgress": [
+          {
+            "CidrIp": "0.0.0.0/0",
+            "Description": "Allow all outbound traffic by default",
+            "IpProtocol": "-1"
+          }
+        ],
+        "VpcId": {
+          "Ref": "stagingVPCDF88DF06"
+        }
+      },
+      "Metadata": {
+        "aws:cdk:path": "ecs-stack/staging/FargateService/SecurityGroup/Resource"
+      }
+    },
+    "stagingFargateServiceSecurityGroupfromecsstackstagingALBSecurityGroup30C4035D50004B3E6F43": {
+      "Type": "AWS::EC2::SecurityGroupIngress",
+      "Properties": {
+        "IpProtocol": "tcp",
+        "Description": "Load balancer to target",
+        "FromPort": 5000,
+        "GroupId": {
+          "Fn::GetAtt": [
+            "stagingFargateServiceSecurityGroupE0F79EF2",
+            "GroupId"
+          ]
+        },
+        "SourceSecurityGroupId": {
+          "Fn::GetAtt": [
+            "stagingALBSecurityGroup920BDA99",
+            "GroupId"
+          ]
+        },
+        "ToPort": 5000
+      },
+      "Metadata": {
+        "aws:cdk:path": "ecs-stack/staging/FargateService/SecurityGroup/from ecsstackstagingALBSecurityGroup30C4035D:5000"
+      }
+    }
+  }
+}
